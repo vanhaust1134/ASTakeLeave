@@ -97,7 +97,7 @@
       "zeroalltabindexes": false
     },
     "Author": "",
-    "BindingErrorCount": 1,
+    "BindingErrorCount": 0,
     "ContainsThirdPartyPcfControls": false,
     "DefaultConnectedDataSourceMaxGetRowsCount": 500,
     "DocumentAppType": "DesktopOrTablet",
@@ -110,7 +110,7 @@
     "DocumentType": "App",
     "EnableInstrumentation": false,
     "FileID": "306ef002-5c1f-4d60-b80f-a4dc85a4c3ce",
-    "Id": "92dce96e-a6a9-4823-9f0f-b8d61b09b8d3",
+    "Id": "911ba5c6-6346-42da-a52b-93ae95f98fa8",
     "InstrumentationKey": "",
     "LocalDatabaseReferences": "{}",
     "ManualOfflineProfileId": "",
@@ -142,6 +142,7 @@
     "Department Screen",
     "Leave Calendar Screen",
     "Home Manage Screen",
-    "Statistical Screen"
+    "Statistical Screen",
+    "Screen1"
   ]
 }

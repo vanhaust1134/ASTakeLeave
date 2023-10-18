@@ -1,12 +1,14 @@
 "'User Screen' As screen":
     Fill: =RGBA(224,224,224,1)
-    OnVisible: |
+    OnVisible: |-
         =//Tạo collect cho bảng phòng để thêm 1 item "Tất cả"
         ClearCollect(gblColDepartment,Table({name:"Tất cả"}));
         Collect(gblColDepartment,Filter('ASTakeLeave.Department',active = 1));
         //Tạo collect cho bảng vai trò để thêm 1 item "Tất cả"
         ClearCollect(gblColRoles,Table({name:"Tất cả"}));
         Collect(gblColRoles,'ASTakeLeave.Roles');
+        
+        Collect(gblColUser,AddColumns('ASTakeLeave.Users' As Temp,"Roles",LookUp('ASTakeLeave.Users_Roles',userID = Temp.userID).roleID));
 
     btn_us_BackGroundScreen As button:
         BorderStyle: =BorderStyle.None
@@ -390,7 +392,7 @@
                 gal_us_List As gallery.galleryVertical:
                     AlignInContainer: =AlignInContainer.SetByContainer
                     DelayItemLoading: =true
-                    Items: =Filter('ASTakeLeave.Users',active = 1 And (divisionID = drp_us_Employee.Selected.ID || If(IsBlank(drp_us_Employee.Selected.ID),true,false)) And (userID = Filter('ASTakeLeave.Users',userID exactin (Filter('ASTakeLeave.Users_Roles',roleID = drp_us_Employee_1.Selected.ID)).userID) || If(IsBlank(drp_us_Employee.Selected.ID),true,false)))
+                    Items: =Filter(gblColUser,active = 1 And (divisionID = drp_us_Employee.Selected.ID || If(IsBlank(drp_us_Employee.Selected.ID),true,false)) And (Roles = drp_us_Employee_1.Selected.ID || If(IsBlank(drp_us_Employee_1.Selected.ID),true,false)))
                     Layout: =Layout.Vertical
                     LayoutMinHeight: =287
                     LayoutMinWidth: =0
