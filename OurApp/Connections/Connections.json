@@ -1,0 +1,49 @@
+{
+  "0eb57bc9-f0aa-4596-a1bf-9585afadffa1": {
+    "appActions": [],
+    "connectionRef": {
+      "apiTier": "Standard",
+      "displayName": "Office 365 Outlook",
+      "iconUri": "https://connectoricons-prod.azureedge.net/releases/v1.0.1664/1.0.1664.3477/office365/icon.png",
+      "id": "/providers/microsoft.powerapps/apis/shared_office365",
+      "parameterHints": {},
+      "parameterHintsV2": {}
+    },
+    "datasets": {},
+    "dataSources": [
+      "Office365Outlook"
+    ],
+    "dependencies": {},
+    "dependents": [],
+    "id": "0eb57bc9-f0aa-4596-a1bf-9585afadffa1"
+  },
+  "cf341574-441c-4f2a-a3b6-ead8c294cdc6": {
+    "appActions": [
+      "providers/PowerPlatform.Governance/Operations/Read",
+      "providers/PowerPlatform.Governance/Operations/Write"
+    ],
+    "connectionRef": {
+      "apiTier": "Standard",
+      "displayName": "SharePoint",
+      "iconUri": "https://connectoricons-prod.azureedge.net/releases/v1.0.1664/1.0.1664.3477/sharepointonline/icon.png",
+      "id": "/providers/microsoft.powerapps/apis/shared_sharepointonline",
+      "parameterHints": {},
+      "parameterHintsV2": {}
+    },
+    "datasets": {
+      "https://bhktechcorp.sharepoint.com/sites/daotran": {
+        "dataSources": {
+          "test": {
+            "tableName": "8cd41c9f-8f4e-4454-a343-6ba85a3ae934"
+          }
+        }
+      }
+    },
+    "dataSources": [
+      "test"
+    ],
+    "dependencies": {},
+    "dependents": [],
+    "id": "cf341574-441c-4f2a-a3b6-ead8c294cdc6"
+  }
+}
