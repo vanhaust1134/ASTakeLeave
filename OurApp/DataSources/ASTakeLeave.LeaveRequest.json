@@ -43,6 +43,7 @@
       "Modified": "Modified",
       "OData__ColorTag": "Color Tag",
       "reason": "reason",
+      "reasonDetail": "reasonDetail",
       "startDate": "startDate",
       "startDateType": "startDateType",
       "startDateValue": "startDateValue",
