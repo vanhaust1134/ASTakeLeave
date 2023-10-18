@@ -1,5 +1,9 @@
 App As appinfo:
     BackEnabled: =false
+    OnStart: |-
+        =Set(gblUser,LookUp('ASTakeLeave.Users_Roles',userID = LookUp('ASTakeLeave.Users','365AccountInfo'.Email = User().Email).userID));
+        If(gblUser.roleID = 1,'Home Screen','Home Manage Screen')
+    StartScreen: =
     Theme: =PowerAppsTheme
 
     Host As hostControl.DefaultHostControlVariant:
