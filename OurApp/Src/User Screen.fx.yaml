@@ -1,5 +1,12 @@
 "'User Screen' As screen":
     Fill: =RGBA(224,224,224,1)
+    OnVisible: |
+        =//Tạo collect cho bảng phòng để thêm 1 item "Tất cả"
+        ClearCollect(gblColDepartment,Table({name:"Tất cả"}));
+        Collect(gblColDepartment,Filter('ASTakeLeave.Department',active = 1));
+        //Tạo collect cho bảng vai trò để thêm 1 item "Tất cả"
+        ClearCollect(gblColRoles,Table({name:"Tất cả"}));
+        Collect(gblColRoles,'ASTakeLeave.Roles');
 
     btn_us_BackGroundScreen As button:
         BorderStyle: =BorderStyle.None
@@ -78,7 +85,7 @@
                 Fill: =RGBA(255, 255, 255, 1)
                 Height: =652
                 Items: |-
-                    =If(gblUser.roleID = 1,Table({ID:1,Image:Home,Title:"Trang chủ",Navigate:'Home Screen'},{ID:2,Image:Analytics,Title:"Báo cáo",Navigate:'Statistical Screen'}),Or(gblUser.roleID = 2,gblUser.roleID = 3,gblUser.roleID = 4),Table({ID:1,Image:Home,Title:"Trang chủ",Navigate:'Home Manage Screen'},{ID:2,Image:'Admin Settings Male',Title:"Phê duyệt",Navigate:'Approve Screen'},{ID:3,Image:Analytics,Title:"Báo cáo",Navigate:'Statistical Screen'}),Or(gblUser.roleID = 5,gblUser.roleID = 6),Table({ID:1,Image:Home,Title:"Trang chủ",Navigate:'Home Manage Screen'},{ID:2,Image:'Admin Settings Male',Title:"Phê duyệt",Navigate:'Approve Screen'},{ID:3,Image:'Data Recovery',Title:"Thiết lập",Navigate:'User Screen'},{ID:4,Image:Analytics,Title:"Báo cáo",Navigate:'Statistical Screen'}),gblUser.roleID = 7,Table({ID:1,Image:'Data Recovery',Title:"Thiết lập",Navigate:'User Screen'}))
+                    =If(gblRecUser.roleID = 1,Table({ID:1,Image:Home,Title:"Trang chủ",Navigate:'Home Screen'},{ID:2,Image:Analytics,Title:"Báo cáo",Navigate:'Statistical Screen'}),Or(gblRecUser.roleID = 2,gblRecUser.roleID = 3,gblRecUser.roleID = 4),Table({ID:1,Image:Home,Title:"Trang chủ",Navigate:'Home Manage Screen'},{ID:2,Image:'Admin Settings Male',Title:"Phê duyệt",Navigate:'Approve Screen'},{ID:3,Image:Analytics,Title:"Báo cáo",Navigate:'Statistical Screen'}),Or(gblRecUser.roleID = 5,gblRecUser.roleID = 6),Table({ID:1,Image:Home,Title:"Trang chủ",Navigate:'Home Manage Screen'},{ID:2,Image:'Admin Settings Male',Title:"Phê duyệt",Navigate:'Approve Screen'},{ID:3,Image:'Data Recovery',Title:"Thiết lập",Navigate:'User Screen'},{ID:4,Image:Analytics,Title:"Báo cáo",Navigate:'Statistical Screen'}),gblRecUser.roleID = 7,Table({ID:1,Image:'Data Recovery',Title:"Thiết lập",Navigate:'User Screen'}))
                 Layout: =Layout.Vertical
                 LayoutMinHeight: =287
                 LayoutMinWidth: =0
@@ -201,7 +208,7 @@
             Align: =Align.Center
             Color: =RGBA(174, 174, 177, 1)
             FontWeight: =FontWeight.Semibold
-            Text: ="Đơn vị"
+            Text: ="Phòng"
             Width: =104
             X: =486
             Y: =145
@@ -211,7 +218,7 @@
             BorderColor: =RGBA(73, 113, 215, 1)
             BorderThickness: =1
             ChevronBackground: =RGBA(73, 113, 215, 1)
-            Items: =["Tất cả","Bộ phận mua hàng","Bộ phận điều vận","Bộ phận hành chánh"]
+            Items: =gblColDepartment
             Width: =200
             X: =590
             Y: =145
@@ -231,7 +238,7 @@
             BorderColor: =RGBA(73, 113, 215, 1)
             BorderThickness: =1
             ChevronBackground: =RGBA(73, 113, 215, 1)
-            Items: =["Tất cả","Nhân viên","Quản lý","Giám đốc khối","Giám đốc điều hành"]
+            Items: =gblColRoles
             Width: =200
             X: =104
             Y: =145
@@ -345,7 +352,7 @@
                         Color: =RGBA(47, 47, 47, 1)
                         FillPortions: =1
                         FontWeight: =FontWeight.Bold
-                        Text: ="Đơn vị"
+                        Text: ="Phòng"
                         ZIndex: =3
 
                     lbl_us_LeaveDay As label:
@@ -383,8 +390,7 @@
                 gal_us_List As gallery.galleryVertical:
                     AlignInContainer: =AlignInContainer.SetByContainer
                     DelayItemLoading: =true
-                    Items: |-
-                        =Table({ID:1,Name:"Nguyễn Văn A",Division:"IT",HasLeave:"4 ngày",LeaveDay:"12 Day"},{ID:2,Name:"Nguyễn Văn B",Division:"Kế toán",HasLeave:"4 ngày",LeaveDay:"12 Day"},{ID:3,Name:"Trần Văn A",Division:"Hệ thống",HasLeave:"4 ngày",LeaveDay:"12 Day"})
+                    Items: =Filter('ASTakeLeave.Users',active = 1 And (divisionID = drp_us_Employee.Selected.ID || If(IsBlank(drp_us_Employee.Selected.ID),true,false)) And (userID = Filter('ASTakeLeave.Users',userID exactin (Filter('ASTakeLeave.Users_Roles',roleID = drp_us_Employee_1.Selected.ID)).userID) || If(IsBlank(drp_us_Employee.Selected.ID),true,false)))
                     Layout: =Layout.Vertical
                     LayoutMinHeight: =287
                     LayoutMinWidth: =0
@@ -418,7 +424,7 @@
                             LayoutMinHeight: =30
                             OnSelect: |-
                                 =UpdateContext({locDetailUser:true})
-                            Text: =ThisItem.Name
+                            Text: =ThisItem.fullName
                             Wrap: =false
                             ZIndex: =1
 
@@ -440,7 +446,7 @@
                             LayoutMinHeight: =30
                             OnSelect: |-
                                 =UpdateContext({locUpdateUser:true})
-                            Text: =ThisItem.Division
+                            Text: =LookUp('ASTakeLeave.Department',ID = ThisItem.departmentID).name
                             Wrap: =false
                             ZIndex: =3
 
@@ -473,7 +479,8 @@
                             LayoutMinHeight: =0
                             LayoutMinWidth: =0
                             OnSelect: |-
-                                =UpdateContext({locUpdateUser:true})
+                                =UpdateContext({locUpdateUser:true});
+                                UpdateContext({locUser:ThisItem})
                             Width: =50
                             ZIndex: =6
 
@@ -484,7 +491,8 @@
                             LayoutMinHeight: =0
                             LayoutMinWidth: =0
                             OnSelect: |-
-                                =UpdateContext({locDeleteUser:true})
+                                =UpdateContext({locDeleteUser:true});
+                                UpdateContext({locUser:ThisItem})
                             Width: =50
                             ZIndex: =7
 
@@ -543,7 +551,7 @@
                 RadiusTopLeft: =5
                 RadiusTopRight: =5
                 Size: =13
-                Text: ="Đơn vị"
+                Text: ="Phòng"
                 Width: =104
                 X: =117
                 Y: =36
@@ -845,8 +853,45 @@
             Height: =36
             HoverFill: =ColorFade(Self.Fill, -20%)
             OnSelect: |-
-                =Notify("Tạo thành công",NotificationType.Success,1500);
-                UpdateContext({locCreateUser:false})
+                =//Kiểm tra các trường mã nhân viên, họ tên, email, chức danh
+                If(
+                    IsBlank(txt_us_Name_3.Text),
+                    Notify(
+                        "Trường mã nhân viên không được để trống",
+                        NotificationType.Error,
+                        1500
+                    ),
+                    IsBlank(txt_us_Name_1.Text),
+                    Notify(
+                        "Trường họ tên nhân viên không được để trống",
+                        NotificationType.Error,
+                        1500
+                    ),
+                    IsBlank(txt_us_Email_1.Text),
+                    Notify(
+                        "Trường email không được để trống",
+                        NotificationType.Error,
+                        1500
+                    ),
+                    IsBlank(txt_us_JobTitle_1.Text),
+                    Notify(
+                        "Trường chức danh không được để trống",
+                        NotificationType.Error,
+                        1500
+                    ),
+                    //Tạo nhân viên
+                    Patch('ASTakeLeave.Users',Defaults('ASTakeLeave.Users'),{userID:txt_us_Name_3.Text,fullName:txt_us_Name_1.Text,email:txt_us_Email_1.Text,phone:txt_us_Phone_1,jobTitle:txt_us_JobTitle_1,divisionID:drp_us_Department_3.Selected.ID,departmentID:drp_us_Department_1.Selected.ID}));
+                    //Tạo phân quyền
+                    Patch('ASTakeLeave.Users_Roles',Defaults('ASTakeLeave.Users_Roles'),{userID:txt_us_Name_3.Text,roleID:drp_us_Roles_1.Selected.ID,active:1});
+                    //Tạo quản lý người dùng
+                    Patch('ASTakeLeave.UserRelationship',Defaults('ASTakeLeave.UserRelationship'),{userID:txt_us_Name_3.Text,approveProcessLevel:2,active:1});
+                Notify(
+                    "Tạo thành công",
+                    NotificationType.Success,
+                    1500
+                );
+                Reset(txt_us_Name_3);Reset(txt_us_Name_1);Reset(txt_us_Email_1);Reset(txt_us_Phone_1);Reset(txt_us_JobTitle_1);Reset(drp_us_Department_3);Reset(drp_us_Department_1);
+                UpdateContext({locCreateUser: false})
             PressedColor: =RGBA(255,255,255,1)
             PressedFill: =Self.Fill
             RadiusBottomLeft: =5
@@ -954,7 +999,7 @@
         drp_us_Department_1 As dropdown:
             BorderColor: =RGBA(116, 116, 116, 1)
             BorderThickness: =1
-            Items: =["Bộ phận mua hàng","Bộ phận"]
+            Items: =Filter('ASTakeLeave.Department',divisionID = drp_us_Department_3.Selected.ID And active = 1)
             Width: =260
             X: =548
             Y: =471
@@ -974,7 +1019,7 @@
         drp_us_Roles_1 As dropdown:
             BorderColor: =RGBA(116, 116, 116, 1)
             BorderThickness: =1
-            Items: =["Nhân viên","Quản lý","Giám đốc khối","Giám đốc điều hành"]
+            Items: ='ASTakeLeave.Roles'
             X: =548
             Y: =535
             ZIndex: =19
@@ -988,10 +1033,10 @@
             Y: =602
             ZIndex: =20
 
-        drp_us_Roles_3 As dropdown:
+        drp_us_Manager As dropdown:
             BorderColor: =RGBA(116, 116, 116, 1)
             BorderThickness: =1
-            Items: =["Trần Văn Hậu","Võ Đỗ Thi Nhân"]
+            Items: =Filter('ASTakeLeave.Users',userID exactin (Filter('ASTakeLeave.Users_Roles',roleID = 2)).userID)
             X: =548
             Y: =602
             ZIndex: =21
@@ -1026,7 +1071,7 @@
         drp_us_Department_3 As dropdown:
             BorderColor: =RGBA(116, 116, 116, 1)
             BorderThickness: =1
-            Items: =["Khối cung ứng","Khối tài chính kế toán"]
+            Items: =Filter('ASTakeLeave.Division',active = 1)
             Width: =260
             X: =548
             Y: =407
@@ -1106,7 +1151,50 @@
             Height: =36
             HoverFill: =ColorFade(Self.Fill, -20%)
             OnSelect: |-
-                =Notify("Tạo thành công",NotificationType.Success,1500);
+                =//Kiểm tra các trường mã nhân viên, họ tên, email, chức danh
+                If(
+                    IsBlank(txt_us_Name_6.Text),
+                    Notify(
+                        "Trường mã nhân viên không được để trống",
+                        NotificationType.Error,
+                        1500
+                    ),
+                    IsBlank(txt_us_Name_2.Text),
+                    Notify(
+                        "Trường họ tên nhân viên không được để trống",
+                        NotificationType.Error,
+                        1500
+                    ),
+                    IsBlank(txt_us_Email_2.Text),
+                    Notify(
+                        "Trường email không được để trống",
+                        NotificationType.Error,
+                        1500
+                    ),
+                    IsBlank(txt_us_Phone_2.Text),
+                    Notify(
+                        "Trường chức danh không được để trống",
+                        NotificationType.Error,
+                        1500
+                    ),
+                    //Sửa nhân viên cũ thành không hoạt động
+                    Patch('ASTakeLeave.Users',LookUp('ASTakeLeave.Users',ID = locUser.ID),{active:0});
+                    //Tạo nhân viên mới
+                    Patch('ASTakeLeave.Users',Defaults('ASTakeLeave.Users'),{userID:txt_us_Name_6.Text,fullName:txt_us_Name_2.Text,email:txt_us_Email_2.Text,phone:txt_us_Phone_2,jobTitle:txt_us_JobTitle_2,divisionID:drp_us_Department_4.Selected.ID,departmentID:drp_us_Department_2.Selected.ID}));
+                    //Sửa quản lý cũ thành không hoạt động
+                    Patch('ASTakeLeave.UserRelationship',LookUp('ASTakeLeave.UserRelationship',userID = locUser.userID),{active:0});
+                    //Sửa vai trò cũ thành không hoạt động
+                    Patch('ASTakeLeave.Users_Roles',LookUp('ASTakeLeave.Users_Roles',userID = locUser.userID),{active:0});
+                    //Tạo phân quyền
+                    Patch('ASTakeLeave.Users_Roles',Defaults('ASTakeLeave.Users_Roles'),{userID:txt_us_Name_3.Text,roleID:drp_us_Roles_1.Selected.ID,active:1});
+                    //Tạo quản lý người dùng
+                    Patch('ASTakeLeave.UserRelationship',Defaults('ASTakeLeave.UserRelationship'),{userID:txt_us_Name_3.Text,approveProcessLevel:2,active:1});
+                Notify(
+                    "Sửa thành công",
+                    NotificationType.Success,
+                    1500
+                );
+                Reset(txt_us_Name_3);Reset(txt_us_Name_1);Reset(txt_us_Email_1);Reset(txt_us_Phone_1);Reset(txt_us_JobTitle_1);Reset(drp_us_Department_3);Reset(drp_us_Department_1);
                 UpdateContext({locUpdateUser:false})
             PressedColor: =RGBA(255,255,255,1)
             PressedFill: =Self.Fill
@@ -1215,7 +1303,7 @@
         drp_us_Department_2 As dropdown:
             BorderColor: =RGBA(116, 116, 116, 1)
             BorderThickness: =1
-            Items: =["Bộ phận mua hàng","Bộ phận"]
+            Items: =Filter('ASTakeLeave.Department',divisionID = drp_us_Department_3.Selected.ID And active = 1)
             Width: =260
             X: =548
             Y: =471
@@ -1235,7 +1323,7 @@
         drp_us_Roles_2 As dropdown:
             BorderColor: =RGBA(116, 116, 116, 1)
             BorderThickness: =1
-            Items: =["Nhân viên","Quản lý","Giám đốc khối","Giám đốc điều hành"]
+            Items: ='ASTakeLeave.Roles'
             X: =548
             Y: =535
             ZIndex: =19
@@ -1249,10 +1337,10 @@
             Y: =602
             ZIndex: =20
 
-        drp_us_Roles_6 As dropdown:
+        drp_us_Manager_2 As dropdown:
             BorderColor: =RGBA(116, 116, 116, 1)
             BorderThickness: =1
-            Items: =["Trần Văn Hậu","Võ Đỗ Thi Nhân"]
+            Items: =Filter('ASTakeLeave.Users',userID exactin (Filter('ASTakeLeave.Users_Roles',roleID = 2)).userID)
             X: =548
             Y: =602
             ZIndex: =21
@@ -1287,7 +1375,7 @@
         drp_us_Department_4 As dropdown:
             BorderColor: =RGBA(116, 116, 116, 1)
             BorderThickness: =1
-            Items: =["Khối cung ứng","Khối tài chính kế toán"]
+            Items: =Filter('ASTakeLeave.Division',active = 1)
             Width: =260
             X: =548
             Y: =407
@@ -1409,7 +1497,7 @@
         lbl_us_Department_7 As label:
             Align: =Align.Right
             FontWeight: =FontWeight.Semibold
-            Text: ="Đơn vị"
+            Text: ="Phòng"
             Width: =97
             X: =448
             Y: =471

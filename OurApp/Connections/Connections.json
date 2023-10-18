@@ -17,6 +17,20 @@
     "dependents": [],
     "id": "0eb57bc9-f0aa-4596-a1bf-9585afadffa1"
   },
+  "937af40b-402d-4b6c-9c16-aee134bae008": {
+    "connectionRef": {
+      "displayName": "Office 365 Users",
+      "iconUri": "https://connectoricons-prod.azureedge.net/releases/v1.0.1664/1.0.1664.3477/office365users/icon.png",
+      "id": "/providers/microsoft.powerapps/apis/shared_office365users"
+    },
+    "datasets": {},
+    "dataSources": [
+      "Office365Users"
+    ],
+    "dependencies": {},
+    "dependents": [],
+    "id": "937af40b-402d-4b6c-9c16-aee134bae008"
+  },
   "cf341574-441c-4f2a-a3b6-ead8c294cdc6": {
     "appActions": [
       "providers/PowerPlatform.Governance/Operations/Read",
@@ -54,6 +68,9 @@
           },
           "ASTakeLeave.Holiday": {
             "tableName": "28a68522-b161-4a40-8627-a0ffb6f219cf"
+          },
+          "ASTakeLeave.LeaveReason": {
+            "tableName": "e4ccec75-f88b-4646-a962-567804c550d1"
           },
           "ASTakeLeave.LeaveRequest": {
             "tableName": "91e3d590-d0f5-4d19-a28f-4833f10d41d5"
@@ -96,7 +113,8 @@
       "ASTakeLeave.UserRelationship",
       "ASTakeLeave.Users_Roles",
       "ASTakeLeave.Users",
-      "ASTakeLeave.WeekDay"
+      "ASTakeLeave.WeekDay",
+      "ASTakeLeave.LeaveReason"
     ],
     "dependencies": {},
     "dependents": [],

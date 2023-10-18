@@ -78,7 +78,7 @@
                 Fill: =RGBA(255, 255, 255, 1)
                 Height: =652
                 Items: |-
-                    =If(gblUser.roleID = 1,Table({ID:1,Image:Home,Title:"Trang chủ",Navigate:'Home Screen'},{ID:2,Image:Analytics,Title:"Báo cáo",Navigate:'Statistical Screen'}),Or(gblUser.roleID = 2,gblUser.roleID = 3,gblUser.roleID = 4),Table({ID:1,Image:Home,Title:"Trang chủ",Navigate:'Home Manage Screen'},{ID:2,Image:'Admin Settings Male',Title:"Phê duyệt",Navigate:'Approve Screen'},{ID:3,Image:Analytics,Title:"Báo cáo",Navigate:'Statistical Screen'}),Or(gblUser.roleID = 5,gblUser.roleID = 6),Table({ID:1,Image:Home,Title:"Trang chủ",Navigate:'Home Manage Screen'},{ID:2,Image:'Admin Settings Male',Title:"Phê duyệt",Navigate:'Approve Screen'},{ID:3,Image:'Data Recovery',Title:"Thiết lập",Navigate:'User Screen'},{ID:4,Image:Analytics,Title:"Báo cáo",Navigate:'Statistical Screen'}),gblUser.roleID = 7,Table({ID:1,Image:'Data Recovery',Title:"Thiết lập",Navigate:'User Screen'}))
+                    =If(gblRecUser.roleID = 1,Table({ID:1,Image:Home,Title:"Trang chủ",Navigate:'Home Screen'},{ID:2,Image:Analytics,Title:"Báo cáo",Navigate:'Statistical Screen'}),Or(gblRecUser.roleID = 2,gblRecUser.roleID = 3,gblRecUser.roleID = 4),Table({ID:1,Image:Home,Title:"Trang chủ",Navigate:'Home Manage Screen'},{ID:2,Image:'Admin Settings Male',Title:"Phê duyệt",Navigate:'Approve Screen'},{ID:3,Image:Analytics,Title:"Báo cáo",Navigate:'Statistical Screen'}),Or(gblRecUser.roleID = 5,gblRecUser.roleID = 6),Table({ID:1,Image:Home,Title:"Trang chủ",Navigate:'Home Manage Screen'},{ID:2,Image:'Admin Settings Male',Title:"Phê duyệt",Navigate:'Approve Screen'},{ID:3,Image:'Data Recovery',Title:"Thiết lập",Navigate:'User Screen'},{ID:4,Image:Analytics,Title:"Báo cáo",Navigate:'Statistical Screen'}),gblRecUser.roleID = 7,Table({ID:1,Image:'Data Recovery',Title:"Thiết lập",Navigate:'User Screen'}))
                 Layout: =Layout.Vertical
                 LayoutMinHeight: =287
                 LayoutMinWidth: =0
@@ -267,8 +267,7 @@
                 gal_us_List_2 As gallery.galleryVertical:
                     AlignInContainer: =AlignInContainer.SetByContainer
                     DelayItemLoading: =true
-                    Items: |-
-                        =Table({ID:1,Name:"Nguyễn Văn B",Division:"Giám đốc điều hành",HasLeave:"3"},{ID:2,Name:"Nguyễn Văn D",Division:"HR",HasLeave:"3"},{ID:3,Name:"Nguyễn Văn C",Division:"C&B",HasLeave:"3"})
+                    Items: =Filter('ASTakeLeave.CommonRelationship',active = 1)
                     Layout: =Layout.Vertical
                     LayoutMinHeight: =287
                     LayoutMinWidth: =0
@@ -314,7 +313,7 @@
                             LayoutMinHeight: =30
                             OnSelect: |-
                                 =UpdateContext({locUpdateUser:true})
-                            Text: =ThisItem.Division
+                            Text: =If(ThisItem.approveProcessLevel = 3,"Giám đốc điều hành","HR / C&B")
                             Wrap: =false
                             ZIndex: =2
 
@@ -336,20 +335,10 @@
                             LayoutMinHeight: =0
                             LayoutMinWidth: =0
                             OnSelect: |-
-                                =UpdateContext({locUpdateUser:true})
+                                =UpdateContext({locUpdateUser:true});
+                                UpdateContext({locCommon:ThisItem})
                             Width: =50
                             ZIndex: =4
-
-                        img_us_Delete_2 As image:
-                            FillPortions: =0.2
-                            Image: =Delete
-                            ImagePosition: =ImagePosition.Center
-                            LayoutMinHeight: =0
-                            LayoutMinWidth: =0
-                            OnSelect: |-
-                                =UpdateContext({locDeleteUser:true})
-                            Width: =50
-                            ZIndex: =5
 
     ctn_us_Header_2 As groupContainer.horizontalAutoLayoutContainer:
         DropShadow: =DropShadow.None
@@ -407,7 +396,7 @@
                 RadiusTopLeft: =5
                 RadiusTopRight: =5
                 Size: =13
-                Text: ="Đơn vị"
+                Text: ="Phòng"
                 Width: =104
                 X: =117
                 Y: =36
@@ -600,7 +589,11 @@
             Height: =36
             HoverFill: =ColorFade(Self.Fill, -20%)
             OnSelect: |-
-                =Notify("Sửa thành công",NotificationType.Success,1500);
+                =//Cập nhật cấp phê duyệt thành không hoạt động
+                Patch('ASTakeLeave.CommonRelationship',LookUp('ASTakeLeave.CommonRelationship',ID = locCommon.ID),{active:0});
+                //Tạo mới cấp phê duyệt
+                Patch('ASTakeLeave.CommonRelationship',Defaults('ASTakeLeave.CommonRelationship'),{userID:drp_us_Roles_4.Selected.ID});
+                Notify("Sửa thành công",NotificationType.Success,1500);
                 UpdateContext({locUpdateUser:false})
             PressedColor: =RGBA(255,255,255,1)
             PressedFill: =Self.Fill
@@ -656,7 +649,7 @@
         drp_us_Roles_4 As dropdown:
             BorderColor: =RGBA(116, 116, 116, 1)
             BorderThickness: =1
-            Items: =["Nguyễn Văn B","Nguyễn Văn C"]
+            Items: =Filter('ASTakeLeave.Users',userID exactin (Filter('ASTakeLeave.Users_Roles',Or(roleID = 4,roleID = 5,roleID = 6)).userID))
             X: =548
             Y: =236
             ZIndex: =19
@@ -796,7 +789,7 @@
         lbl_us_Department_5 As label:
             Align: =Align.Right
             FontWeight: =FontWeight.Semibold
-            Text: ="Đơn vị"
+            Text: ="Phòng"
             X: =387
             Y: =428
             ZIndex: =12

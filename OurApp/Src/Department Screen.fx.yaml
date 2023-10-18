@@ -1,5 +1,12 @@
 "'Department Screen' As screen":
     Fill: =RGBA(224,224,224,1)
+    OnVisible: |-
+        =//Tạo collect cho bảng khối để thêm 1 item "Tất cả"
+        ClearCollect(gblColDivision,Table({name:"Tất cả"}));
+        Collect(gblColDivision,Filter('ASTakeLeave.Division',active = 1));
+        //Tạo collect cho bảng phòng để thêm 1 item "Tất cả"
+        ClearCollect(gblColDepartment,Table({name:"Tất cả"}));
+        Collect(gblColDepartment,Filter('ASTakeLeave.Department',active = 1));
 
     btn_ds_BackGroundScreen As button:
         BorderStyle: =BorderStyle.None
@@ -78,7 +85,7 @@
                 Fill: =RGBA(255, 255, 255, 1)
                 Height: =652
                 Items: |-
-                    =If(gblUser.roleID = 1,Table({ID:1,Image:Home,Title:"Trang chủ",Navigate:'Home Screen'},{ID:2,Image:Analytics,Title:"Báo cáo",Navigate:'Statistical Screen'}),Or(gblUser.roleID = 2,gblUser.roleID = 3,gblUser.roleID = 4),Table({ID:1,Image:Home,Title:"Trang chủ",Navigate:'Home Manage Screen'},{ID:2,Image:'Admin Settings Male',Title:"Phê duyệt",Navigate:'Approve Screen'},{ID:3,Image:Analytics,Title:"Báo cáo",Navigate:'Statistical Screen'}),Or(gblUser.roleID = 5,gblUser.roleID = 6),Table({ID:1,Image:Home,Title:"Trang chủ",Navigate:'Home Manage Screen'},{ID:2,Image:'Admin Settings Male',Title:"Phê duyệt",Navigate:'Approve Screen'},{ID:3,Image:'Data Recovery',Title:"Thiết lập",Navigate:'User Screen'},{ID:4,Image:Analytics,Title:"Báo cáo",Navigate:'Statistical Screen'}),gblUser.roleID = 7,Table({ID:1,Image:'Data Recovery',Title:"Thiết lập",Navigate:'User Screen'}))
+                    =If(gblRecUser.roleID = 1,Table({ID:1,Image:Home,Title:"Trang chủ",Navigate:'Home Screen'},{ID:2,Image:Analytics,Title:"Báo cáo",Navigate:'Statistical Screen'}),Or(gblRecUser.roleID = 2,gblRecUser.roleID = 3,gblRecUser.roleID = 4),Table({ID:1,Image:Home,Title:"Trang chủ",Navigate:'Home Manage Screen'},{ID:2,Image:'Admin Settings Male',Title:"Phê duyệt",Navigate:'Approve Screen'},{ID:3,Image:Analytics,Title:"Báo cáo",Navigate:'Statistical Screen'}),Or(gblRecUser.roleID = 5,gblRecUser.roleID = 6),Table({ID:1,Image:Home,Title:"Trang chủ",Navigate:'Home Manage Screen'},{ID:2,Image:'Admin Settings Male',Title:"Phê duyệt",Navigate:'Approve Screen'},{ID:3,Image:'Data Recovery',Title:"Thiết lập",Navigate:'User Screen'},{ID:4,Image:Analytics,Title:"Báo cáo",Navigate:'Statistical Screen'}),gblRecUser.roleID = 7,Table({ID:1,Image:'Data Recovery',Title:"Thiết lập",Navigate:'User Screen'}))
                 Layout: =Layout.Vertical
                 LayoutMinHeight: =287
                 LayoutMinWidth: =0
@@ -160,7 +167,7 @@
             FontWeight: =FontWeight.Bold
             Height: =41
             Size: =18
-            Text: ="Danh sách Đơn vị"
+            Text: ="Danh sách Phòng"
             Width: =281
             X: =191
             Y: =101
@@ -207,12 +214,14 @@
             Y: =145
             ZIndex: =3
 
-        drp_ds_Employee As dropdown:
+        drp_ds_Division As dropdown:
             BorderColor: =RGBA(73, 113, 215, 1)
             BorderThickness: =1
             ChevronBackground: =RGBA(73, 113, 215, 1)
-            Items: |-
-                =Table({ID:2,Line:"Tất cả"},{ID:1,Line:"Khối cung ứng"},{ID:2,Line:"Khối tài chính kế toán"})
+            Items: =gblColDivision
+            OnChange: |-
+                =ClearCollect(gblColDepartment,Table({name:"Tất cả"}));
+                Collect(gblColDepartment,Filter('ASTakeLeave.Department',active = 1 And divisionID = drp_ds_Division.Selected.ID));
             Width: =200
             X: =590
             Y: =145
@@ -222,17 +231,17 @@
             Align: =Align.Center
             Color: =RGBA(174, 174, 177, 1)
             FontWeight: =FontWeight.Semibold
-            Text: ="Đơn vị"
+            Text: ="Phòng"
             Width: =70
             X: =486
             Y: =145
             ZIndex: =5
 
-        drp_ds_Employee_1 As dropdown:
+        drp_ds_Department As dropdown:
             BorderColor: =RGBA(73, 113, 215, 1)
             BorderThickness: =1
             ChevronBackground: =RGBA(73, 113, 215, 1)
-            Items: =["Tất cả","Bộ phận mua hàng","Bộ phận điều vận","Bộ phận hành chánh"]
+            Items: =gblColDepartment
             Width: =200
             X: =104
             Y: =145
@@ -312,7 +321,7 @@
                         Color: =RGBA(47, 47, 47, 1)
                         FillPortions: =3
                         FontWeight: =FontWeight.Bold
-                        Text: ="Đơn vị"
+                        Text: ="Phòng"
                         ZIndex: =2
 
                     lb_ds_UserName_1 As label:
@@ -343,7 +352,8 @@
                 Gallery1 As gallery.variableTemplateHeightGallery:
                     DelayItemLoading: =true
                     Items: |-
-                        =Table({ID:1,Unit1:"Khối cung ứng",Manager:"Trần Văn Hậu"},{ID:2,Unit1:"Khối tài chính kế toán",Manager:"Võ Đỗ Thi Nhân"})
+                        =//Bảng khối lọc theo điều kiện
+                        Filter('ASTakeLeave.Division',active = 1 And (ID = drp_ds_Division.Selected.ID || If(IsBlank(drp_ds_Division.Selected.ID),true,false)))
                     Layout: =Layout.Vertical
                     LayoutMinHeight: =287
                     LayoutMinWidth: =320
@@ -355,8 +365,9 @@
                         Align: =Align.Center
                         FontWeight: =FontWeight.Semibold
                         OnSelect: |-
-                            =UpdateContext({locDetailDP:true})
-                        Text: =ThisItem.Unit1
+                            =UpdateContext({locDetailDP:true});
+                            UpdateContext({locDivision:ThisItem})
+                        Text: =ThisItem.name
                         Width: =240
                         Wrap: =false
                         X: =7
@@ -366,8 +377,7 @@
                     Gallery6 As gallery.galleryVertical:
                         DelayItemLoading: =true
                         Height: =185
-                        Items: |-
-                            =Filter(Table({ID:1,Unit:"Bộ phận mua hàng",Manager:"Trần Văn Hậu",Unit1ID:1},{ID:2,Unit:"Bộ phận điều vận",Manager:"Trần Văn Hậu",Unit1ID:1},{ID:3,Unit:"Bộ phận quản lý đơn hàng",Manager:"Trần Văn Hậu",Unit1ID:1},{ID:1,Unit:"Bộ phận hành chánh",Manager:"Võ Đỗ Thi Nhân",Unit1ID:2},{ID:2,Unit:"Bộ phận nhân sự",Manager:"Võ Đỗ Thi Nhân",Unit1ID:2}),Unit1ID = ThisItem.ID)
+                        Items: =Filter('ASTakeLeave.Department',divisionID = ThisItem.ID And active = 1 And (ID = drp_ds_Department.Selected.ID || If(IsBlank(drp_ds_Department.Selected.ID),true,false)))
                         Layout: =Layout.Vertical
                         LoadingSpinner: =LoadingSpinner.Data
                         ShowScrollbar: =false
@@ -395,7 +405,7 @@
                             Label9_1 As label:
                                 AlignInContainer: =AlignInContainer.Center
                                 FillPortions: =1.27
-                                Text: =ThisItem.Unit
+                                Text: =ThisItem.name
                                 Wrap: =false
                                 ZIndex: =2
 
@@ -413,7 +423,8 @@
                                 ImagePosition: =ImagePosition.Center
                                 OnSelect: |-
                                     =UpdateContext({locUpdateUnit:true});
-                                    ClearCollect(colUnit,Table({ID:1,Unit:"",Manager:""}))
+                                    UpdateContext({locDivision:ThisItem});
+                                    ClearCollect(colDepartmentByDivision,Filter('ASTakeLeave.Department',divisionID = ThisItem.ID And active = 1))
                                 Width: =44
                                 X: =949
                                 Y: =2
@@ -425,7 +436,9 @@
                                 Image: =Delete
                                 ImagePosition: =ImagePosition.Center
                                 OnSelect: |-
-                                    =UpdateContext({locDeleteUnit:true})
+                                    =UpdateContext({locDeleteUnit:true});
+                                    UpdateContext({locDivision:ThisItem});
+                                    UpdateContext({locDepartmentSelected:LookUp('ASTakeLeave.Department',ID = ThisItem.ID And active = 1).ID})
                                 Width: =49
                                 X: =44
                                 Y: =2
@@ -435,8 +448,9 @@
                         Align: =Align.Center
                         FontWeight: =FontWeight.Semibold
                         OnSelect: |-
-                            =UpdateContext({locDetailDP:true})
-                        Text: ="Trần Văn Hậu"
+                            =UpdateContext({locDetailDP:true});
+                            UpdateContext({locDivision:ThisItem})
+                        Text: =LookUp('ASTakeLeave.Users',userID = ThisItem.directorUserID And active = 1).fullName
                         Width: =240
                         Wrap: =false
                         X: =709
@@ -448,7 +462,9 @@
                         Image: =Edit
                         ImagePosition: =ImagePosition.Center
                         OnSelect: |-
-                            =UpdateContext({locUpdateDP:true})
+                            =UpdateContext({locUpdateDP:true});
+                            UpdateContext({locDivision:ThisItem});
+                            ClearCollect(colDepartmentByDivision,Filter('ASTakeLeave.Department',divisionID = ThisItem.ID And active = 1))
                         Width: =44
                         X: =991
                         Y: =2
@@ -459,7 +475,9 @@
                         Image: =Delete
                         ImagePosition: =ImagePosition.Center
                         OnSelect: |-
-                            =UpdateContext({locDeleteDP:true})
+                            =UpdateContext({locDeleteDP:true});
+                            UpdateContext({locDivision:ThisItem});
+                            ClearCollect(colDepartmentByDivision,Filter('ASTakeLeave.Department',divisionID = ThisItem.ID And active = 1))
                         Width: =49
                         X: =1035
                         Y: =2
@@ -520,7 +538,7 @@
                 RadiusTopLeft: =5
                 RadiusTopRight: =5
                 Size: =13
-                Text: ="Đơn vị"
+                Text: ="Phòng"
                 Width: =104
                 X: =191
                 Y: =36
@@ -693,7 +711,7 @@
 
         lbl_ds_Name_5 As label:
             FontWeight: =FontWeight.Semibold
-            Text: ="Bạn có chắc chắn muốn xóa ? Tiến trình sẽ xóa tất cả các đơn vị thuộc khối này"
+            Text: ="Bạn có chắc chắn muốn xóa ? Tiến trình sẽ xóa tất cả các Phòng thuộc khối này"
             Width: =580
             X: =387
             Y: =348
@@ -713,7 +731,26 @@
             Height: =36
             HoverFill: =ColorFade(Self.Fill, -20%)
             OnSelect: |-
-                =Notify("Xóa thành công",NotificationType.Success,1500);
+                =//Cập nhật khối đã chọn thành không hoạt động
+                    Patch(
+                        'ASTakeLeave.Division',
+                        LookUp('ASTakeLeave.Division',ID = locDivision.ID),
+                        {
+                            active: 0
+                        }
+                    );
+                    //Cập nhật phòng ban đã chọn thành không hoạt động
+                ForAll(
+                        colDepartmentByDivision As Temp,
+                        Patch(
+                            'ASTakeLeave.Department',
+                            LookUp('ASTakeLeave.Department',divisionID = locDivision.ID),
+                            {
+                                active: 0
+                            }
+                        )
+                    );
+                Notify("Xóa thành công",NotificationType.Success,1500);
                 UpdateContext({locDeleteDP:false})
             PressedColor: =RGBA(255,255,255,1)
             PressedFill: =Self.Fill
@@ -821,8 +858,48 @@
             Height: =36
             HoverFill: =ColorFade(Self.Fill, -20%)
             OnSelect: |-
-                =Notify("Tạo thành công",NotificationType.Success,1500);
-                UpdateContext({locCreateDP:false})
+                =If(
+                    //Kiểm tra trống trường tên khối
+                    IsBlank(txt_ds_Name_1.Text),
+                    Notify(
+                        "Trường tên khối không được bỏ trống",
+                        NotificationType.Error,
+                        1500
+                    ),
+                    //Tạo khối
+                    Set(
+                        gblDivision,
+                        Patch(
+                            'ASTakeLeave.Division',
+                            Defaults('ASTakeLeave.Division'),
+                            {
+                                name: txt_ds_Name_1.Text,
+                                directorUserID: drp_ds_LineManager.Selected.userID,
+                                active: 1
+                            }
+                        )
+                    );
+                    //Tạo phòng ban với mã khối đã tạo
+                    ForAll(
+                        colUnit As Temp,
+                        Patch(
+                            'ASTakeLeave.Department',
+                            Defaults('ASTakeLeave.Department'),
+                            {
+                                name: Temp.Unit,
+                                divisionID: gblDivision.ID,
+                                active: 1
+                            }
+                        )
+                    )
+                );
+                Notify(
+                    "Tạo thành công",
+                    NotificationType.Success,
+                    1500
+                );
+                Reset(txt_ds_Name_1);
+                UpdateContext({locCreateDP: false})
             PressedColor: =RGBA(255,255,255,1)
             PressedFill: =Self.Fill
             RadiusBottomLeft: =5
@@ -859,7 +936,7 @@
             BorderColor: =RGBA(116, 116, 116, 1)
             BorderThickness: =1
             Default: =""
-            HintText: ="Nhập tên Đơn vị"
+            HintText: ="Nhập tên Phòng"
             Width: =394
             X: =548
             Y: =213
@@ -873,10 +950,10 @@
             Y: =269
             ZIndex: =15
 
-        Dropdown2 As dropdown:
+        drp_ds_LineManager As dropdown:
             BorderColor: =RGBA(116, 116, 116, 1)
             BorderThickness: =1
-            Items: =["Trần Văn Hậu","Võ Đỗ Thi Nhân"]
+            Items: =Filter('ASTakeLeave.Users',active = 1)
             X: =548
             Y: =269
             ZIndex: =16
@@ -884,7 +961,7 @@
         lbl_ds_DepartmentName_9 As label:
             Align: =Align.Right
             FontWeight: =FontWeight.Semibold
-            Text: ="Đơn vị"
+            Text: ="Phòng"
             X: =387
             Y: =323
             ZIndex: =17
@@ -895,7 +972,7 @@
             Fill: =RGBA(139, 154, 159, 1)
             Height: =28
             OnSelect: |-
-                =Collect(colUnit,Table({ID:Max(colUnit,ID)+1,Unit:"",Manager:""}))
+                =Collect(colUnit,Table({ID:Max(colUnit,ID) + 1 ,Unit:"",Manager:""}))
             RadiusBottomLeft: =5
             RadiusBottomRight: =5
             RadiusTopLeft: =5
@@ -944,8 +1021,11 @@
                     AlignInContainer: =AlignInContainer.Center
                     BorderColor: =RGBA(116, 116, 116, 1)
                     BorderThickness: =1
-                    Default: =""
-                    HintText: ="Nhập tên đơn vị"
+                    Default: =ThisItem.Unit
+                    HintText: ="Nhập tên Phòng"
+                    OnChange: |-
+                        =//Cập nhật thay đổi trường Phòng trên danh sách phòng
+                        Patch(colUnit,LookUp(colUnit,ID = ThisItem.ID),{Unit:TextInput1.Text})
                     OnSelect: =
                     Width: =450
                     X: =44
@@ -1030,14 +1110,68 @@
             Y: =587
             ZIndex: =6
 
-        btn_ds_Submit_10 As button:
+        btn_ds_Edit As button:
             BorderThickness: =1
             Fill: =RGBA(0, 89, 204, 1)
             Height: =36
             HoverFill: =ColorFade(Self.Fill, -20%)
             OnSelect: |-
-                =Notify("Sửa thành công",NotificationType.Success,1500);
-                UpdateContext({locUpdateDP:false})
+                =If(
+                    //Kiểm tra trống trường tên khối
+                    IsBlank(txt_ds_Name_1.Text),
+                    Notify(
+                        "Trường tên khối không được bỏ trống",
+                        NotificationType.Error,
+                        1500
+                    ),
+                    //Sửa khối cũ thành không hoạt động
+                    Patch(
+                        'ASTakeLeave.Division',
+                        LookUp('ASTakeLeave.Division',ID = locDivision.ID),
+                        {
+                            active: 0
+                        }
+                    );
+                    //Sửa phòng ban cũ thành không hoạt động
+                ForAll(
+                        colDepartmentByDivision As Temp,
+                        Patch(
+                            'ASTakeLeave.Department',
+                            LookUp('ASTakeLeave.Department',divisionID = locDivision.ID),
+                            {
+                                active: 0
+                            }
+                        )
+                    );
+                    //Sửa khối mới
+                    Patch(
+                        'ASTakeLeave.Division',
+                        LookUp('ASTakeLeave.Division',ID = locDivision.ID),
+                        {
+                            name: txt_ds_Name_2.Text,
+                            directorUserID: drp_ds_LineManager_2.Selected.userID,
+                            active: 1
+                        }
+                    );
+                    //Tạo phòng ban với mã khối đã tạo
+                ForAll(
+                        colDepartmentByDivision As Temp,
+                        Patch(
+                            'ASTakeLeave.Department',
+                            LookUp('ASTakeLeave.Department',divisionID = locDivision.ID),
+                            {
+                                name: Temp.name,
+                                active: 1
+                            }
+                        )
+                    )
+                );
+                Notify(
+                    "Sửa thành công",
+                    NotificationType.Success,
+                    1500
+                );
+                UpdateContext({locUpdateDP: false})
             PressedColor: =RGBA(255,255,255,1)
             PressedFill: =Self.Fill
             RadiusBottomLeft: =5
@@ -1073,8 +1207,8 @@
         txt_ds_Name_2 As text:
             BorderColor: =RGBA(116, 116, 116, 1)
             BorderThickness: =1
-            Default: =""
-            HintText: ="Nhập tên Đơn vị"
+            Default: =locDivision.name
+            HintText: ="Nhập tên Phòng"
             Width: =394
             X: =548
             Y: =213
@@ -1088,10 +1222,10 @@
             Y: =269
             ZIndex: =15
 
-        Dropdown2_2 As dropdown:
+        drp_ds_LineManager_2 As dropdown:
             BorderColor: =RGBA(116, 116, 116, 1)
             BorderThickness: =1
-            Items: =["Trần Văn Hậu","Võ Đỗ Thi Nhân"]
+            Items: =LookUp('ASTakeLeave.Users',userID = locDivision.directorUserID)
             X: =548
             Y: =269
             ZIndex: =16
@@ -1099,7 +1233,7 @@
         lbl_ds_DepartmentName_12 As label:
             Align: =Align.Right
             FontWeight: =FontWeight.Semibold
-            Text: ="Đơn vị"
+            Text: ="Phòng"
             X: =387
             Y: =323
             ZIndex: =17
@@ -1124,7 +1258,7 @@
         Gallery7_1 As gallery.galleryVertical:
             DelayItemLoading: =true
             Height: =217
-            Items: =colUnit
+            Items: =colDepartmentByDivision
             Layout: =Layout.Vertical
             LoadingSpinner: =LoadingSpinner.Data
             ShowScrollbar: =false
@@ -1159,8 +1293,11 @@
                     AlignInContainer: =AlignInContainer.Center
                     BorderColor: =RGBA(116, 116, 116, 1)
                     BorderThickness: =1
-                    Default: =""
-                    HintText: ="Nhập tên đơn vị"
+                    Default: =ThisItem.name
+                    HintText: ="Nhập tên Phòng"
+                    OnChange: |-
+                        =//Cập nhật thay đổi trường Phòng trên danh sách phòng
+                        Patch(colDepartmentByDivision,LookUp(colDepartmentByDivision,ID = ThisItem.ID),{name:TextInput1_1.Text})
                     OnSelect: =
                     Width: =450
                     X: =44
@@ -1251,7 +1388,15 @@
             Height: =36
             HoverFill: =ColorFade(Self.Fill, -20%)
             OnSelect: |-
-                =Notify("Xóa thành công",NotificationType.Success,1500);
+                =//Sửa phòng ban cũ thành không hoạt động
+                        Patch(
+                            'ASTakeLeave.Department',
+                            LookUp('ASTakeLeave.Department',ID = locDepartmentSelected),
+                            {
+                                active: 0
+                            }
+                        );
+                Notify("Xóa thành công",NotificationType.Success,1500);
                 UpdateContext({locDeleteUnit:false})
             PressedColor: =RGBA(255,255,255,1)
             PressedFill: =Self.Fill
@@ -1388,7 +1533,7 @@
         lbl_ds_DepartmentName_15 As label:
             Align: =Align.Right
             FontWeight: =FontWeight.Semibold
-            Text: ="Đơn vị"
+            Text: ="Phòng"
             X: =387
             Y: =215
             ZIndex: =17
@@ -1449,7 +1594,7 @@
                     BorderColor: =RGBA(116, 116, 116, 1)
                     BorderThickness: =1
                     Default: =""
-                    HintText: ="Nhập tên đơn vị"
+                    HintText: ="Nhập tên Phòng"
                     OnSelect: =
                     Width: =240
                     X: =44
@@ -1504,7 +1649,7 @@
 
         lbl_ds_Title_16 As label:
             FontWeight: =FontWeight.Bold
-            Text: ="Chi tiết đơn vị"
+            Text: ="Chi tiết Phòng"
             X: =387
             Y: =151
             ZIndex: =2
@@ -1567,11 +1712,11 @@
         txt_ds_Name_5 As text:
             BorderColor: =RGBA(116, 116, 116, 1)
             BorderThickness: =1
-            Default: ="Khối cung ứng"
+            Default: =locDivision.name
             DisabledColor: =RGBA(0, 0, 0, 1)
             DisabledFill: =RGBA(255, 255, 255, 1)
             DisplayMode: =DisplayMode.Disabled
-            HintText: ="Nhập tên Đơn vị"
+            HintText: ="Nhập tên Phòng"
             Width: =394
             X: =548
             Y: =213
@@ -1591,14 +1736,14 @@
             DisabledColor: =RGBA(0, 0, 0, 1)
             DisabledFill: =RGBA(255, 255, 255, 1)
             DisplayMode: =DisplayMode.Disabled
-            Items: =["Trần Văn Hậu","Võ Đỗ Thi Nhân"]
+            Items: =LookUp('ASTakeLeave.Users',userID = locDivision.directorUserID)
             X: =548
             Y: =269
             ZIndex: =16
 
         lbl_ds_DepartmentName_16 As label:
             FontWeight: =FontWeight.Semibold
-            Text: ="Đơn vị"
+            Text: ="Phòng"
             X: =394
             Y: =323
             ZIndex: =17
@@ -1606,8 +1751,7 @@
         Gallery7_3 As gallery.galleryVertical:
             DelayItemLoading: =true
             Height: =217
-            Items: |-
-                =Table({ID:1,Unit:"Bộ phận mua hàng",Manager:"Trần Văn Hậu",Unit1ID:1},{ID:2,Unit:"Bộ phận điều vận",Manager:"Trần Văn Hậu",Unit1ID:1},{ID:3,Unit:"Bộ phận quản lý đơn hàng",Manager:"Trần Văn Hậu",Unit1ID:1})
+            Items: =Filter('ASTakeLeave.Department',divisionID = locDivision.ID And active = 1)
             Layout: =Layout.Vertical
             LoadingSpinner: =LoadingSpinner.Data
             ShowScrollbar: =false
@@ -1642,11 +1786,11 @@
                     AlignInContainer: =AlignInContainer.Center
                     BorderColor: =RGBA(116, 116, 116, 1)
                     BorderThickness: =1
-                    Default: =ThisItem.Unit
+                    Default: =ThisItem.name
                     DisabledColor: =RGBA(0, 0, 0, 1)
                     DisabledFill: =RGBA(255, 255, 255, 1)
                     DisplayMode: =DisplayMode.Disabled
-                    HintText: ="Nhập tên đơn vị"
+                    HintText: ="Nhập tên Phòng"
                     OnSelect: =
                     Width: =490
                     X: =44
