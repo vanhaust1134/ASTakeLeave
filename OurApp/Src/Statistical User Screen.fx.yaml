@@ -1,9 +1,9 @@
-"'Statistical Screen' As screen":
+"'Statistical User Screen' As screen":
     Fill: =RGBA(224,224,224,1)
     OnVisible: |-
-        =ClearCollect(colFilterAdvance,Table({ID:4,Title:"Theo năm",Status:true},{ID:1,Title:"Tất cả nhân viên",Status:true},{ID:2,Title:"Theo Phòng",Status:true},{ID:3,Title:"Theo nhân viên",Status:true}))
+        =ClearCollect(colFilterAdvance,Table({ID:4,Title:"Theo năm",Status:true}))
 
-    btn_hs_BackGroundScreen_2 As button:
+    btn_hs_BackGroundScreen_3 As button:
         BorderStyle: =BorderStyle.None
         DisabledFill: =RGBA(241, 244, 250, 1)
         DisplayMode: =DisplayMode.Disabled
@@ -16,7 +16,7 @@
         Width: =1366
         ZIndex: =1
 
-    ctn_hs_Navigate_2 As groupContainer.verticalAutoLayoutContainer:
+    ctn_hs_Navigate_3 As groupContainer.verticalAutoLayoutContainer:
         BorderStyle: =BorderStyle.None
         DropShadow: =DropShadow.None
         Fill: =RGBA(255, 255, 255, 1)
@@ -32,7 +32,7 @@
         Width: =196
         ZIndex: =18
 
-        ctn_HeaderMenu_3 As groupContainer.horizontalAutoLayoutContainer:
+        ctn_HeaderMenu_11 As groupContainer.horizontalAutoLayoutContainer:
             AlignInContainer: =AlignInContainer.SetByContainer
             DropShadow: =DropShadow.None
             FillPortions: =0
@@ -45,7 +45,7 @@
             PaddingRight: =20
             ZIndex: =1
 
-            img_hs_Logo_3 As image:
+            img_hs_Logo_4 As image:
                 Height: =110
                 Image: =Name
                 Width: =50
@@ -53,7 +53,7 @@
                 Y: =13
                 ZIndex: =1
 
-            Label1_3 As label:
+            Label1_4 As label:
                 Color: =RGBA(73, 113, 215, 1)
                 FontWeight: =FontWeight.Bold
                 Size: =15
@@ -61,7 +61,7 @@
                 Width: =145
                 ZIndex: =2
 
-        ctn_NavigationMenu_10 As groupContainer.verticalAutoLayoutContainer:
+        ctn_NavigationMenu_11 As groupContainer.verticalAutoLayoutContainer:
             AlignInContainer: =AlignInContainer.SetByContainer
             DropShadow: =DropShadow.None
             Fill: =RGBA(255, 255, 255, 1)
@@ -77,13 +77,13 @@
             RadiusTopRight: =0
             ZIndex: =3
 
-            gal_NavigationMenu_10 As gallery.galleryVertical:
+            gal_NavigationMenu_11 As gallery.galleryVertical:
                 AlignInContainer: =AlignInContainer.SetByContainer
                 DelayItemLoading: =true
                 Fill: =RGBA(255, 255, 255, 1)
                 Height: =652
                 Items: |-
-                    =If(gblRecUser.roleID = 1,Table({ID:1,Image:Home,Title:"Trang chủ",Navigate:'Home Screen'},{ID:2,Image:Analytics,Title:"Báo cáo",Navigate:'Statistical User Screen'}),Or(gblRecUser.roleID = 2,gblRecUser.roleID = 3,gblRecUser.roleID = 4),Table({ID:1,Image:Home,Title:"Trang chủ",Navigate:'Home Manage Screen'},{ID:2,Image:'Admin Settings Male',Title:"Phê duyệt",Navigate:'Approve Screen'},{ID:3,Image:Analytics,Title:"Báo cáo",Navigate:'Statistical Screen'}),Or(gblRecUser.roleID = 5,gblRecUser.roleID = 6),Table({ID:1,Image:Home,Title:"Trang chủ",Navigate:'Home Manage Screen'},{ID:2,Image:'Admin Settings Male',Title:"Phê duyệt",Navigate:'Approve Screen'},{ID:3,Image:'Data Recovery',Title:"Thiết lập",Navigate:'User Screen'},{ID:4,Image:Analytics,Title:"Báo cáo",Navigate:'Statistical Screen'}),gblRecUser.roleID = 7,Table({ID:1,Image:'Data Recovery',Title:"Thiết lập",Navigate:'User Screen'}))
+                    =If(gblRecUser.roleID = 1,Table({ID:1,Image:Home,Title:"Trang chủ",Navigate:'Home Screen'},{ID:2,Image:Analytics,Title:"Báo cáo",Navigate:'Statistical User Screen'}),Or(gblRecUser.roleID = 2,gblRecUser.roleID = 3,gblRecUser.roleID = 4),Table({ID:1,Image:Home,Title:"Trang chủ",Navigate:'Home Manage Screen'},{ID:2,Image:'Admin Settings Male',Title:"Phê duyệt",Navigate:'Approve Screen'},{ID:3,Image:Analytics,Title:"Báo cáo",Navigate:'Statistical User Screen'}),Or(gblRecUser.roleID = 5,gblRecUser.roleID = 6),Table({ID:1,Image:Home,Title:"Trang chủ",Navigate:'Home Manage Screen'},{ID:2,Image:'Admin Settings Male',Title:"Phê duyệt",Navigate:'Approve Screen'},{ID:3,Image:'Data Recovery',Title:"Thiết lập",Navigate:'User Screen'},{ID:4,Image:Analytics,Title:"Báo cáo",Navigate:'Statistical User Screen'}),gblRecUser.roleID = 7,Table({ID:1,Image:'Data Recovery',Title:"Thiết lập",Navigate:'User Screen'}))
                 Layout: =Layout.Vertical
                 LayoutMinHeight: =287
                 LayoutMinWidth: =0
@@ -96,27 +96,25 @@
                 Y: =115
                 ZIndex: =1
 
-                img_MenuImage_10 As image:
+                img_MenuImage_11 As image:
                     Height: =30
                     Image: =ThisItem.Image
                     OnSelect: =Select(Parent)
                     Width: =40
-                    X: =15
                     Y: =10
                     ZIndex: =1
 
-                lbl_MenuTitle_10 As label:
+                lbl_MenuTitle_11 As label:
                     Color: =RGBA(149, 149, 149, 1)
                     FontWeight: =FontWeight.Semibold
                     Height: =29
                     OnSelect: =Select(Parent)
                     Text: =ThisItem.Title
                     Width: =117
-                    X: =60
                     Y: =10
                     ZIndex: =2
 
-                btn_Select_3 As button:
+                btn_Select_11 As button:
                     BorderThickness: =0
                     Fill: =If(ThisItem.ID = gblMenuFunctionSelected,RGBA(149, 149, 149,0.2),RGBA(0, 0, 0, 0))
                     Height: =50
@@ -130,11 +128,10 @@
                     RadiusTopLeft: =0
                     RadiusTopRight: =0
                     Text: =""
-                    Width: =195
-                    X: =-5
+                    Width: =186
                     ZIndex: =3
 
-            btn_Exit_11 As button:
+            btn_Exit_12 As button:
                 AlignInContainer: =AlignInContainer.Center
                 BorderColor: =RGBA(73, 113, 215, 1)
                 Color: =RGBA(116, 116, 116, 1)
@@ -148,7 +145,7 @@
                 Y: =682
                 ZIndex: =2
 
-    ctn_hs_Title_2 As groupContainer.verticalAutoLayoutContainer:
+    ctn_hs_Title_3 As groupContainer.verticalAutoLayoutContainer:
         DropShadow: =DropShadow.None
         Height: =41
         LayoutMode: =LayoutMode.Auto
@@ -159,7 +156,7 @@
         Y: =104
         ZIndex: =20
 
-        lbl_hs_Title_2 As label:
+        lbl_hs_Title_3 As label:
             Color: =RGBA(43, 54, 74, 1)
             FillPortions: =1
             FontWeight: =FontWeight.Bold
@@ -171,7 +168,7 @@
             Y: =101
             ZIndex: =1
 
-        Button3 As button:
+        Button3_1 As button:
             BorderThickness: =1
             Fill: =RGBA(73, 113, 215, 1)
             HoverFill: =ColorFade(RGBA(73, 113, 215, 1), -20%)
@@ -186,7 +183,7 @@
             Text: ="Xuất file"
             ZIndex: =2
 
-    ctn_hs_MainContent_2 As groupContainer.horizontalAutoLayoutContainer:
+    ctn_hs_MainContent_3 As groupContainer.horizontalAutoLayoutContainer:
         DropShadow: =DropShadow.None
         Height: =618
         LayoutGap: =10
@@ -200,7 +197,7 @@
         Y: =145
         ZIndex: =23
 
-        ctn_hs_List_2 As groupContainer.verticalAutoLayoutContainer:
+        ctn_hs_List_3 As groupContainer.verticalAutoLayoutContainer:
             DropShadow: =DropShadow.None
             Fill: =RGBA(255, 255, 255, 1)
             LayoutAlignItems: =LayoutAlignItems.Stretch
@@ -212,7 +209,7 @@
             PaddingRight: =5
             ZIndex: =1
 
-            Container6_2 As groupContainer.horizontalAutoLayoutContainer:
+            Container6_3 As groupContainer.horizontalAutoLayoutContainer:
                 DropShadow: =DropShadow.None
                 FillPortions: =0
                 Height: =60
@@ -221,7 +218,7 @@
                 LayoutMode: =LayoutMode.Auto
                 ZIndex: =1
 
-                Button1_2 As button:
+                Button1_3 As button:
                     Align: =Align.Left
                     AlignInContainer: =AlignInContainer.Stretch
                     BorderStyle: =BorderStyle.None
@@ -238,13 +235,13 @@
                     Text: ="Biểu đồ thống kê theo tháng"
                     ZIndex: =1
 
-            Rectangle2 As rectangle:
+            Rectangle2_2 As rectangle:
                 Fill: =RGBA(73, 113, 215, 1)
                 Height: =2
                 LayoutMinHeight: =2
                 ZIndex: =2
 
-            CompositeColumnChart1 As group:
+            CompositeColumnChart1_1 As group:
                 Height: =5
                 LayoutMinHeight: =5
                 LayoutMinWidth: =5
@@ -253,7 +250,7 @@
                 Y: =40
                 ZIndex: =2
 
-                ColumnChart1 As barChart:
+                ColumnChart1_1 As barChart:
                     GridStyle: =GridStyle.All
                     Height: =500
                     Items: |-
@@ -263,17 +260,17 @@
                     Y: =70
                     ZIndex: =4
 
-                Legend1 As legend:
+                Legend1_1 As legend:
                     FillPortions: =1
                     Height: =80
-                    ItemColorSet: =ColumnChart1.ItemColorSet
-                    Items: =ColumnChart1.SeriesLabels
+                    ItemColorSet: =ColumnChart1_1.ItemColorSet
+                    Items: =ColumnChart1_1.SeriesLabels
                     Width: =320
                     X: =80
                     Y: =480
                     ZIndex: =5
 
-        ctn_hs_Statistical_2 As groupContainer.verticalAutoLayoutContainer:
+        ctn_hs_Statistical_3 As groupContainer.verticalAutoLayoutContainer:
             DropShadow: =DropShadow.None
             Fill: =RGBA(255, 255, 255, 1)
             FillPortions: =0.3
@@ -293,7 +290,7 @@
             RadiusTopRight: =10
             ZIndex: =2
 
-            lbl_hs_Statistical_4 As label:
+            lbl_hs_Statistical_5 As label:
                 Color: =RGBA(124, 124, 124, 1)
                 FontWeight: =FontWeight.Semibold
                 Height: =50
@@ -302,13 +299,13 @@
                 Text: ="Bộ lọc nâng cao"
                 ZIndex: =1
 
-            Rectangle2_1 As rectangle:
+            Rectangle2_3 As rectangle:
                 Fill: =RGBA(73, 113, 215, 1)
                 Height: =2
                 LayoutMinHeight: =2
                 ZIndex: =2
 
-            Gallery4 As gallery.variableTemplateHeightGallery:
+            Gallery4_1 As gallery.variableTemplateHeightGallery:
                 DelayItemLoading: =true
                 Items: =colFilterAdvance
                 Layout: =Layout.Vertical
@@ -319,14 +316,14 @@
                 TemplateSize: =210
                 ZIndex: =3
 
-                Label2 As label:
+                Label2_1 As label:
                     FontWeight: =FontWeight.Semibold
                     OnSelect: =Select(Parent)
                     Text: =ThisItem.Title
                     Y: =8
                     ZIndex: =1
 
-                Toggle2 As toggleSwitch:
+                Toggle2_1 As toggleSwitch:
                     BorderStyle: =BorderStyle.None
                     Default: =ThisItem.Status
                     OnCheck: |-
@@ -344,7 +341,7 @@
                     Y: =14
                     ZIndex: =2
 
-                Container5 As groupContainer.verticalAutoLayoutContainer:
+                Container5_5 As groupContainer.verticalAutoLayoutContainer:
                     DropShadow: =DropShadow.Semibold
                     Height: =160
                     LayoutDirection: =LayoutDirection.Vertical
@@ -354,12 +351,12 @@
                     Y: =48
                     ZIndex: =3
 
-                    Label5 As label:
+                    Label5_2 As label:
                         AlignInContainer: =AlignInContainer.Stretch
                         Text: ="Nhân viên"
                         ZIndex: =1
 
-                    Dropdown3 As dropdown:
+                    Dropdown3_2 As dropdown:
                         AlignInContainer: =AlignInContainer.Center
                         BorderColor: =RGBA(73, 113, 215, 1)
                         BorderThickness: =1
@@ -370,12 +367,12 @@
                         Width: =200
                         ZIndex: =2
 
-                    Label5_1 As label:
+                    Label5_7 As label:
                         AlignInContainer: =AlignInContainer.Stretch
                         Text: ="Tháng"
                         ZIndex: =3
 
-                    Dropdown3_1 As dropdown:
+                    Dropdown3_7 As dropdown:
                         AlignInContainer: =AlignInContainer.Center
                         BorderColor: =RGBA(73, 113, 215, 1)
                         BorderThickness: =1
@@ -386,7 +383,7 @@
                         Width: =200
                         ZIndex: =4
 
-                Container5_1 As groupContainer.verticalAutoLayoutContainer:
+                Container5_6 As groupContainer.verticalAutoLayoutContainer:
                     DropShadow: =DropShadow.Semibold
                     Height: =90
                     LayoutDirection: =LayoutDirection.Vertical
@@ -396,12 +393,12 @@
                     Y: =49
                     ZIndex: =4
 
-                    Label5_3 As label:
+                    Label5_8 As label:
                         AlignInContainer: =AlignInContainer.Stretch
                         Text: ="Tháng"
                         ZIndex: =3
 
-                    Dropdown3_3 As dropdown:
+                    Dropdown3_8 As dropdown:
                         AlignInContainer: =AlignInContainer.Center
                         BorderColor: =RGBA(73, 113, 215, 1)
                         BorderThickness: =1
@@ -412,7 +409,7 @@
                         Width: =200
                         ZIndex: =4
 
-                Container5_2 As groupContainer.verticalAutoLayoutContainer:
+                Container5_7 As groupContainer.verticalAutoLayoutContainer:
                     DropShadow: =DropShadow.Semibold
                     Height: =90
                     LayoutDirection: =LayoutDirection.Vertical
@@ -422,12 +419,12 @@
                     Y: =49
                     ZIndex: =5
 
-                    Label5_4 As label:
+                    Label5_9 As label:
                         AlignInContainer: =AlignInContainer.Stretch
                         Text: ="Phòng"
                         ZIndex: =3
 
-                    Dropdown3_4 As dropdown:
+                    Dropdown3_9 As dropdown:
                         AlignInContainer: =AlignInContainer.Center
                         BorderColor: =RGBA(73, 113, 215, 1)
                         BorderThickness: =1
@@ -438,7 +435,7 @@
                         Width: =200
                         ZIndex: =4
 
-                Container5_3 As groupContainer.verticalAutoLayoutContainer:
+                Container5_4 As groupContainer.verticalAutoLayoutContainer:
                     DropShadow: =DropShadow.Semibold
                     Height: =90
                     LayoutDirection: =LayoutDirection.Vertical
@@ -448,12 +445,12 @@
                     Y: =47
                     ZIndex: =6
 
-                    Label5_5 As label:
+                    Label5_6 As label:
                         AlignInContainer: =AlignInContainer.Stretch
                         Text: ="Năm"
                         ZIndex: =3
 
-                    Dropdown3_5 As dropdown:
+                    Dropdown3_6 As dropdown:
                         AlignInContainer: =AlignInContainer.Center
                         BorderColor: =RGBA(73, 113, 215, 1)
                         BorderThickness: =1
@@ -464,7 +461,7 @@
                         Width: =200
                         ZIndex: =4
 
-    ctn_hs_Header_2 As groupContainer.horizontalAutoLayoutContainer:
+    ctn_hs_Header_3 As groupContainer.horizontalAutoLayoutContainer:
         DropShadow: =DropShadow.None
         Height: =104
         LayoutMode: =LayoutMode.Auto
@@ -472,7 +469,7 @@
         X: =196
         ZIndex: =24
 
-        ctn_hs_Tab_2 As groupContainer.horizontalAutoLayoutContainer:
+        ctn_hs_Tab_3 As groupContainer.horizontalAutoLayoutContainer:
             AlignInContainer: =AlignInContainer.SetByContainer
             DropShadow: =DropShadow.None
             Height: =101
@@ -486,7 +483,7 @@
             X: =137
             ZIndex: =1
 
-        ctn_hs_Info_2 As groupContainer.horizontalAutoLayoutContainer:
+        ctn_hs_Info_3 As groupContainer.horizontalAutoLayoutContainer:
             AlignInContainer: =AlignInContainer.Start
             DropShadow: =DropShadow.None
             Fill: =RGBA(220, 228, 252, 1)
@@ -503,19 +500,19 @@
             RadiusTopRight: =20
             ZIndex: =2
 
-            img_hs_Avatar_3 As image:
+            img_hs_Avatar_4 As image:
                 AlignInContainer: =AlignInContainer.Center
                 Height: =50
                 Image: =User().Image
                 LayoutMinHeight: =50
-                RadiusBottomLeft: =img_hs_Avatar_3.Height
-                RadiusBottomRight: =img_hs_Avatar_3.Height
-                RadiusTopLeft: =img_hs_Avatar_3.Height
-                RadiusTopRight: =img_hs_Avatar_3.Height
+                RadiusBottomLeft: =img_hs_Avatar_4.Height
+                RadiusBottomRight: =img_hs_Avatar_4.Height
+                RadiusTopLeft: =img_hs_Avatar_4.Height
+                RadiusTopRight: =img_hs_Avatar_4.Height
                 Width: =50
                 ZIndex: =1
 
-            ctn_hs_Info2_3 As groupContainer.verticalAutoLayoutContainer:
+            ctn_hs_Info2_4 As groupContainer.verticalAutoLayoutContainer:
                 DropShadow: =DropShadow.None
                 LayoutDirection: =LayoutDirection.Vertical
                 LayoutMinHeight: =0
@@ -524,7 +521,7 @@
                 PaddingLeft: =5
                 ZIndex: =2
 
-                lbl_hs_Name_3 As label:
+                lbl_hs_Name_4 As label:
                     FontWeight: =FontWeight.Bold
                     PaddingTop: =20
                     Size: =12
@@ -532,14 +529,14 @@
                     Wrap: =false
                     ZIndex: =1
 
-                lbl_hs_Mail_3 As label:
+                lbl_hs_Mail_4 As label:
                     PaddingBottom: =20
                     Size: =12
                     Text: =User().Email
                     Wrap: =false
                     ZIndex: =2
 
-    ctn_ss_Export As groupContainer.manualLayoutContainer:
+    ctn_ss_Export_1 As groupContainer.manualLayoutContainer:
         Fill: =RGBA(0, 0, 0, 0.5)
         Height: =768
         RadiusBottomLeft: =20
@@ -550,7 +547,7 @@
         Width: =1366
         ZIndex: =25
 
-        btn_ds_BackGround_4 As button:
+        btn_ds_BackGround_12 As button:
             BorderStyle: =BorderStyle.None
             DisabledFill: =RGBA(255, 255, 255, 1)
             DisplayMode: =DisplayMode.Disabled
@@ -565,14 +562,14 @@
             Y: =260
             ZIndex: =1
 
-        lbl_ds_Title_11 As label:
+        lbl_ds_Title_17 As label:
             FontWeight: =FontWeight.Bold
             Text: ="Xuất file"
             X: =387
             Y: =267
             ZIndex: =2
 
-        shp_ds_Deco_14 As rectangle:
+        shp_ds_Deco_23 As rectangle:
             Fill: =RGBA(202, 202, 202, 1)
             Height: =1
             Width: =608
@@ -580,7 +577,7 @@
             Y: =312
             ZIndex: =3
 
-        ico_ds_Cancel_4 As icon.Cancel:
+        ico_ds_Cancel_12 As icon.Cancel:
             Color: =RGBA(149, 149, 149, 1)
             Height: =29
             Icon: =Icon.Cancel
@@ -591,7 +588,7 @@
             Y: =269
             ZIndex: =4
 
-        lbl_ds_DepartmentName_5 As label:
+        lbl_ds_DepartmentName_17 As label:
             FontWeight: =FontWeight.Semibold
             Text: ="Bạn muốn xuất file tất cả nhân viên hay theo biểu đồ bộ lọc hiện tại ?"
             Width: =596
@@ -599,7 +596,7 @@
             Y: =320
             ZIndex: =5
 
-        shp_ds_Deco_4 As rectangle:
+        shp_ds_Deco_24 As rectangle:
             Fill: =RGBA(202, 202, 202, 1)
             Height: =1
             Width: =608
@@ -607,13 +604,13 @@
             Y: =467
             ZIndex: =6
 
-        btn_ds_Submit_6 As button:
+        btn_ds_Submit_7 As button:
             BorderThickness: =1
             Fill: =RGBA(0, 89, 204, 1)
             Height: =36
             HoverFill: =ColorFade(Self.Fill, -20%)
             OnSelect: |-
-                =If(Radio1.Selected.Value = "Theo biểu đồ hiện tại",true);
+                =If(Radio1_1.Selected.Value = "Theo biểu đồ hiện tại",true);
                 Notify("Xuất file thành công",NotificationType.Success,1500);
                 UpdateContext({locExport:false})
             PressedColor: =RGBA(255,255,255,1)
@@ -628,7 +625,7 @@
             Y: =478
             ZIndex: =7
 
-        btn_ds_Cancel_6 As button:
+        btn_ds_Cancel_12 As button:
             BorderThickness: =1
             Color: =RGBA(0, 0, 0, 1)
             Fill: =RGBA(255, 255, 255, 1)
@@ -648,7 +645,7 @@
             Y: =478
             ZIndex: =8
 
-        Radio1 As radio:
+        Radio1_1 As radio:
             BorderStyle: =BorderStyle.None
             Height: =106
             Items: =["Theo biểu đồ hiện tại","Tất cả trong năm"]
