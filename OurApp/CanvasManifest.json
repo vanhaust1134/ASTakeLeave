@@ -131,7 +131,7 @@
     "UserLocale": "en-US"
   },
   "ScreenOrder": [
-    "Home Screen",
+    "Home User Screen",
     "Approve Screen",
     "History Approve Screen",
     "Request Screen",
@@ -141,7 +141,7 @@
     "Approval Process Screen",
     "Department Screen",
     "Leave Calendar Screen",
-    "Home Manage Screen",
+    "Home Manager Screen",
     "Statistical Screen",
     "Statistical User Screen"
   ]
