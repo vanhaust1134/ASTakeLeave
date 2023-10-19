@@ -223,7 +223,10 @@
             ZIndex: =5
 
         ctn_lds_Search As groupContainer.manualLayoutContainer:
+            AlignInContainer: =AlignInContainer.SetByContainer
             DropShadow: =DropShadow.None
+            LayoutMinHeight: =100
+            LayoutMinWidth: =250
             ZIndex: =6
 
             txt_lds_Search As text:
