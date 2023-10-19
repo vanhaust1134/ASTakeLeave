@@ -78,7 +78,7 @@
                 Fill: =RGBA(255, 255, 255, 1)
                 Height: =652
                 Items: |-
-                    =If(gblRecUser.roleID = 1,Table({ID:1,Image:Home,Title:"Trang chủ",Navigate:'Home Screen'},{ID:2,Image:Analytics,Title:"Báo cáo",Navigate:'Statistical User Screen'}),Or(gblRecUser.roleID = 2,gblRecUser.roleID = 3,gblRecUser.roleID = 4),Table({ID:1,Image:Home,Title:"Trang chủ",Navigate:'Home Manage Screen'},{ID:2,Image:'Admin Settings Male',Title:"Phê duyệt",Navigate:'Approve Screen'},{ID:3,Image:Analytics,Title:"Báo cáo",Navigate:'Statistical Screen'}),Or(gblRecUser.roleID = 5,gblRecUser.roleID = 6),Table({ID:1,Image:Home,Title:"Trang chủ",Navigate:'Home Manage Screen'},{ID:2,Image:'Admin Settings Male',Title:"Phê duyệt",Navigate:'Approve Screen'},{ID:3,Image:'Data Recovery',Title:"Thiết lập",Navigate:'User Screen'},{ID:4,Image:Analytics,Title:"Báo cáo",Navigate:'Statistical Screen'}),gblRecUser.roleID = 7,Table({ID:1,Image:'Data Recovery',Title:"Thiết lập",Navigate:'User Screen'}))
+                    =If(gblRecUser.roleID = 1,Table({ID:1,Image:Home,Title:"Trang chủ",Navigate:'Home Screen'},{ID:2,Image:Analytics,Title:"Báo cáo",Navigate:'Statistical User Screen'}),Or(gblRecUser.roleID = 2,gblRecUser.roleID = 3,gblRecUser.roleID = 4),Table({ID:1,Image:Home,Title:"Trang chủ",Navigate:'Home Manage Screen'},{ID:2,Image:'Admin Settings Male',Title:"Phê duyệt",Navigate:'Approve Screen'},{ID:3,Image:Analytics,Title:"Báo cáo",Navigate:'Statistical Screen'}),gblRecUser.roleID = 5,Table({ID:1,Image:Home,Title:"Trang chủ",Navigate:'Home Manage Screen'},{ID:2,Image:'Admin Settings Male',Title:"Phê duyệt",Navigate:'Approve Screen'},{ID:3,Image:'Data Recovery',Title:"Thiết lập",Navigate:'User Screen'},{ID:4,Image:Analytics,Title:"Báo cáo",Navigate:'Statistical Screen'}),gblRecUser.roleID = 6,Table({ID:1,Image:'Data Recovery',Title:"Thiết lập",Navigate:'User Screen'}))
                 Layout: =Layout.Vertical
                 LayoutMinHeight: =287
                 LayoutMinWidth: =0
@@ -409,7 +409,7 @@
                             FillPortions: =1
                             FontWeight: =FontWeight.Semibold
                             LayoutMinHeight: =30
-                            Text: ="12 ngày"
+                            Text: =ThisItem.maxDayOff_Year & " ngày"
                             ZIndex: =3
 
                         lbl_lds_ItemTimeTotal As label:
@@ -417,7 +417,7 @@
                             FillPortions: =1
                             FontWeight: =FontWeight.Semibold
                             LayoutMinHeight: =30
-                            Text: =If(IsBlank(ThisItem.totalDayLeft_Year),"0 ngày",ThisItem.totalDayLeft_Year)
+                            Text: =If(IsBlank(ThisItem.totalDayLeft_Year),"0 ngày",ThisItem.totalDayLeft_Year & " ngày")
                             ZIndex: =4
 
                         lbl_lds_ItemLeaveDay_1 As label:
@@ -425,7 +425,7 @@
                             FillPortions: =1
                             FontWeight: =FontWeight.Semibold
                             LayoutMinHeight: =30
-                            Text: =If(IsBlank(ThisItem.maxDayOff_Year - ThisItem.totalDayLeft_Year),"0 ngày",ThisItem.maxDayOff_Year - ThisItem.totalDayLeft_Year)
+                            Text: =If(IsBlank(ThisItem.maxDayOff_Year - ThisItem.totalDayLeft_Year),"0 ngày",ThisItem.maxDayOff_Year - ThisItem.totalDayLeft_Year & " ngày")
                             ZIndex: =5
 
                         lbl_lds_ItemLeaveDay_2 As label:
@@ -433,7 +433,7 @@
                             FillPortions: =1
                             FontWeight: =FontWeight.Semibold
                             LayoutMinHeight: =30
-                            Text: =If(IsBlank(ThisItem.totalDayUnpaid_Year),"0 ngày",ThisItem.totalDayUnpaid_Year)
+                            Text: =If(IsBlank(ThisItem.totalDayUnpaid_Year),"0 ngày",ThisItem.totalDayUnpaid_Year & " ngày")
                             ZIndex: =6
 
     ctn_lds_Header As groupContainer.horizontalAutoLayoutContainer:
