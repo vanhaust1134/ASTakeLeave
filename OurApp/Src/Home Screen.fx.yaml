@@ -776,3 +776,19 @@
                     Wrap: =false
                     ZIndex: =2
 
+    ButtonCanvas2 As Button:
+        DisplayMode: =DisplayMode.Edit
+        Height: =32
+        OnSelect: |-
+            =ForAll(
+                gblColAllUser As temp,
+                Collect(
+                    gblColAllUser365,
+                    temp.OData__x0033_65AccountInfo
+                )
+            );
+        Width: =96
+        X: =514
+        Y: =36
+        ZIndex: =25
+
