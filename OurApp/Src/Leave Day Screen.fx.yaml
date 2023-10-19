@@ -211,7 +211,7 @@
             BorderColor: =RGBA(73, 113, 215, 1)
             BorderThickness: =1
             ChevronBackground: =RGBA(73, 113, 215, 1)
-            Items: =["Tất cả","Bộ phận mua hàng","Bộ phận IT","Bộ phận điều vận"]
+            Items: =gblColDepartment
             Width: =200
             X: =590
             Y: =145
@@ -224,8 +224,6 @@
 
         ctn_lds_Search As groupContainer.manualLayoutContainer:
             DropShadow: =DropShadow.None
-            LayoutMinHeight: =50
-            LayoutMinWidth: =250
             ZIndex: =6
 
             txt_lds_Search As text:
@@ -360,8 +358,7 @@
                 gal_lds_List As gallery.galleryVertical:
                     AlignInContainer: =AlignInContainer.SetByContainer
                     DelayItemLoading: =true
-                    Items: |-
-                        =Table({ID:1,Name:"Nguyễn Văn A",Division:"Bộ phận mua hàng",HasLeave:"4 ngày",LeaveDay:"12 Day"},{ID:2,Name:"Nguyễn Văn B",Division:"Bộ phận IT",HasLeave:"4 ngày",LeaveDay:"12 Day"},{ID:3,Name:"Trần Văn A",Division:"Bộ phận điều vận",HasLeave:"4 ngày",LeaveDay:"12 Day"})
+                    Items: =Search(Filter(gblColDayOff, (deparmentName = drp_lds_Employee.Selected.ID || If(IsBlank(drp_lds_Employee.Selected.ID),true,false))),txt_lds_Search.Text,"userName")
                     Layout: =Layout.Vertical
                     LayoutMinHeight: =287
                     LayoutMinWidth: =0
@@ -393,7 +390,7 @@
                             FillPortions: =1
                             FontWeight: =FontWeight.Bold
                             LayoutMinHeight: =30
-                            Text: =ThisItem.Name
+                            Text: =LookUp(gblColUser,userID = ThisItem.userID).fullName
                             ZIndex: =1
 
                         lbl_lds_ItemDivision As label:
@@ -401,7 +398,7 @@
                             FillPortions: =1
                             FontWeight: =FontWeight.Semibold
                             LayoutMinHeight: =30
-                            Text: =ThisItem.Division
+                            Text: =LookUp(gblColDepartment,ID = LookUp(gblColUser,userID = ThisItem.userID).departmentID).name
                             ZIndex: =2
 
                         lbl_lds_ItemLeaveDay As label:
@@ -417,7 +414,7 @@
                             FillPortions: =1
                             FontWeight: =FontWeight.Semibold
                             LayoutMinHeight: =30
-                            Text: ="8 ngày"
+                            Text: =If(IsBlank(ThisItem.totalDayLeft_Year),"0 ngày",ThisItem.totalDayLeft_Year)
                             ZIndex: =4
 
                         lbl_lds_ItemLeaveDay_1 As label:
@@ -425,7 +422,7 @@
                             FillPortions: =1
                             FontWeight: =FontWeight.Semibold
                             LayoutMinHeight: =30
-                            Text: ="5 ngày"
+                            Text: =If(IsBlank(ThisItem.maxDayOff_Year - ThisItem.totalDayLeft_Year),"0 ngày",ThisItem.maxDayOff_Year - ThisItem.totalDayLeft_Year)
                             ZIndex: =5
 
                         lbl_lds_ItemLeaveDay_2 As label:
@@ -433,7 +430,7 @@
                             FillPortions: =1
                             FontWeight: =FontWeight.Semibold
                             LayoutMinHeight: =30
-                            Text: ="1 ngày"
+                            Text: =If(IsBlank(ThisItem.totalDayUnpaid_Year),"0 ngày",ThisItem.totalDayUnpaid_Year)
                             ZIndex: =6
 
     ctn_lds_Header As groupContainer.horizontalAutoLayoutContainer:
