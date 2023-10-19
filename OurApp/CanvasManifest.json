@@ -110,11 +110,11 @@
     "DocumentType": "App",
     "EnableInstrumentation": false,
     "FileID": "306ef002-5c1f-4d60-b80f-a4dc85a4c3ce",
-    "Id": "3644722e-a425-4e2f-a00d-900550186156",
+    "Id": "9d3ede91-aef9-4631-848f-b3f5c6d81f41",
     "InstrumentationKey": "",
     "LocalDatabaseReferences": "{}",
     "ManualOfflineProfileId": "",
-    "Name": "ASTakeLeave",
+    "Name": "ASTakeLeave.msapp",
     "OriginatingVersion": "1.334",
     "ParserErrorCount": 0,
     "ShowStatusBar": false
@@ -131,7 +131,7 @@
     "UserLocale": "en-US"
   },
   "ScreenOrder": [
-    "Home Screen",
+    "Home User Screen",
     "Approve Screen",
     "History Approve Screen",
     "Request Screen",
@@ -141,7 +141,7 @@
     "Approval Process Screen",
     "Department Screen",
     "Leave Calendar Screen",
-    "Home Manage Screen",
+    "Home Manager Screen",
     "Statistical Screen",
     "Statistical User Screen"
   ]
