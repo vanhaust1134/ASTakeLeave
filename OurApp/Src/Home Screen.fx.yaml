@@ -1,7 +1,8 @@
 "'Home Screen' As screen":
     Fill: =RGBA(224,224,224,1)
     OnVisible: |-
-        =Set(_dateSelected, Today());
+        =//Calendar setting
+        Set(_dateSelected, Today());
         Set(_firstDayOfMonth, DateAdd(Today(), 1 - Day(Today()), TimeUnit.Days));
         Set(_firstDayInView, DateAdd(_firstDayOfMonth, -(Weekday(_firstDayOfMonth) - 2 + 1), TimeUnit.Days));
         Set(_lastDayOfMonth, DateAdd(DateAdd(_firstDayOfMonth, 1, TimeUnit.Months), -1, TimeUnit.Days));
