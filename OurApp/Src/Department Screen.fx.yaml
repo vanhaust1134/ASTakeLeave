@@ -2,11 +2,9 @@
     Fill: =RGBA(224,224,224,1)
     OnVisible: |-
         =//Tạo collect cho bảng khối để thêm 1 item "Tất cả"
-        ClearCollect(gblColDivision,Table({name:"Tất cả"}));
-        Collect(gblColDivision,Filter('ASTakeLeave.Division',active = 1));
+        If(CountRows(Filter(gblColDivision,name = "Tất cả")) = 0,Collect(gblColDivision,Table({name:"Tất cả"})));
         //Tạo collect cho bảng phòng để thêm 1 item "Tất cả"
-        ClearCollect(gblColDepartment,Table({name:"Tất cả"}));
-        Collect(gblColDepartment,Filter('ASTakeLeave.Department',active = 1));
+        If(CountRows(Filter(gblColDepartment,name = "Tất cả")) = 0,Collect(gblColDepartment,Table({name:"Tất cả"})));
 
     btn_ds_BackGroundScreen As button:
         BorderStyle: =BorderStyle.None
@@ -953,7 +951,7 @@
         drp_ds_LineManager As dropdown:
             BorderColor: =RGBA(116, 116, 116, 1)
             BorderThickness: =1
-            Items: =Filter('ASTakeLeave.Users',active = 1)
+            Items: =Filter(gblColAllUser,roleID = 3 And active = 1)
             X: =548
             Y: =269
             ZIndex: =16

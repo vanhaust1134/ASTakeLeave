@@ -1,22 +1,17 @@
 "'User Screen' As screen":
     Fill: =RGBA(224,224,224,1)
     OnVisible: |-
-        =//Tạo collect cho bảng khối để thêm 1 item "Tất cả"
-        ClearCollect(gblColDivision,Table({name:"Tất cả"}));
-        Collect(gblColDivision,Filter('ASTakeLeave.Division',active = 1));
-        //Tạo collect cho bảng phòng để thêm 1 item "Tất cả"
-        ClearCollect(gblColDepartment,Table({name:"Tất cả"}));
-        Collect(gblColDepartment,Filter('ASTakeLeave.Department',active = 1));
+        =//Tạo collect cho bảng phòng để thêm 1 item "Tất cả"
+        If(CountRows(Filter(gblColDepartment,name = "Tất cả")) = 0,Collect(gblColDepartment,Table({name:"Tất cả"})));
         //Tạo collect cho bảng vai trò để thêm 1 item "Tất cả"
         ClearCollect(gblColRoles,Table({name:"Tất cả"}));
         Collect(gblColRoles,'ASTakeLeave.Roles');
         
         //Thêm trường role vào bảng user
         ClearCollect(gblColUser,AddColumns('ASTakeLeave.Users' As Temp,"Roles",LookUp('ASTakeLeave.Users_Roles',userID = Temp.userID).roleID));
-        Set(gblMenuFunctionSelected,1);
-        //Thêm trường phòng ban và tên người dùng vào bảng ngày phép
-        ClearCollect(gblColDayOff,AddColumns('ASTakeLeave.TotalDayOffInYear' As Temp,"userName",LookUp('ASTakeLeave.Users',userID = Temp.userID).fullName,"deparmentName",LookUp('ASTakeLeave.Users',userID = Temp.userID).departmentID));
-        Set(gblMenuFunctionSelected,1)
+        
+        //Lấy bảng quản lý người dùng
+        ClearCollect(gblColManagerByUser,Filter('ASTakeLeave.UserRelationship',active = 1))
 
     btn_us_BackGroundScreen As button:
         BorderStyle: =BorderStyle.None
@@ -400,7 +395,7 @@
                 gal_us_List As gallery.galleryVertical:
                     AlignInContainer: =AlignInContainer.SetByContainer
                     DelayItemLoading: =true
-                    Items: =Search(Filter(gblColUser,active = 1 And (divisionID = drp_us_Employee.Selected.ID || If(IsBlank(drp_us_Employee.Selected.ID),true,false)) And (Roles = drp_us_Employee_1.Selected.ID || If(IsBlank(drp_us_Employee_1.Selected.ID),true,false))),txt_lds_Search_1.Text,"fullName")
+                    Items: =Search(Filter(gblColAllUser,active = 1 And (divisionID = drp_us_Employee.Selected.ID || If(IsBlank(drp_us_Employee.Selected.ID),true,false)) And (roleID = drp_us_Employee_1.Selected.ID || If(IsBlank(drp_us_Employee_1.Selected.ID),true,false))),txt_lds_Search_1.Text,"fullName")
                     Layout: =Layout.Vertical
                     LayoutMinHeight: =287
                     LayoutMinWidth: =0
@@ -447,7 +442,7 @@
                             OnSelect: |-
                                 =UpdateContext({locDetailUser:true});
                                 UpdateContext({locUser:ThisItem})
-                            Text: ="Giám đốc kinh doanh"
+                            Text: =ThisItem.jobTitle
                             Wrap: =false
                             ZIndex: =2
 
@@ -471,7 +466,7 @@
                             OnSelect: |-
                                 =UpdateContext({locDetailUser:true});
                                 UpdateContext({locUser:ThisItem})
-                            Text: ="Trần Văn Hậu"
+                            Text: =LookUp(gblColAllUser,userID = LookUp(gblColManagerByUser,approveUserID = ThisItem.userID).approveUserID).fullName
                             Wrap: =false
                             ZIndex: =4
 
@@ -483,7 +478,7 @@
                             OnSelect: |-
                                 =UpdateContext({locDetailUser:true});
                                 UpdateContext({locUser:ThisItem})
-                            Text: ="Nhân viên"
+                            Text: =LookUp(gblColRoles,ID = ThisItem.roleID).name
                             Wrap: =false
                             ZIndex: =5
 
@@ -495,7 +490,9 @@
                             LayoutMinWidth: =0
                             OnSelect: |-
                                 =UpdateContext({locUpdateUser:true});
-                                UpdateContext({locUser:ThisItem})
+                                UpdateContext({locUser:ThisItem});
+                                UpdateContext({locAdd:true});
+                                UpdateContext({locEdit:false})
                             Width: =50
                             ZIndex: =6
 
@@ -760,7 +757,26 @@
             Height: =36
             HoverFill: =ColorFade(Self.Fill, -20%)
             OnSelect: |-
-                =Notify("Xóa thành công",NotificationType.Success,1500);
+                =//Sửa nhân viên cũ thành không hoạt động
+                Patch('ASTakeLeave.Users',LookUp('ASTakeLeave.Users',ID = locUser.ID),{active:0});
+                //Sửa quản lý cũ thành không hoạt động
+                Patch('ASTakeLeave.UserRelationship',LookUp('ASTakeLeave.UserRelationship',userID = locUser.userID),{active:0});
+                //Sửa vai trò cũ thành không hoạt động
+                Patch('ASTakeLeave.Users_Roles',LookUp('ASTakeLeave.Users_Roles',userID = locUser.userID),{active:0});
+                //Làm mới bảng người dùng
+                Refresh('ASTakeLeave.Users');
+                //Thêm trường role vào bảng user
+                ClearCollect(
+                    gblColAllUser,
+                    AddColumns(
+                        ShowColumns('ASTakeLeave.Users', "ID", "userID", "fullName", "shortName", "email", "phone", "jobTitle", "departmentID", "divisionID", "OData__x0033_65AccountInfo", "active") As temp, 
+                        "roleID", 
+                        LookUp('ASTakeLeave.Users_Roles', userID = temp.userID).roleID
+                    )
+                );
+                //Lấy bảng quản lý người dùng
+                ClearCollect(gblColManagerByUser,Filter('ASTakeLeave.UserRelationship',active = 1));
+                Notify("Xóa thành công",NotificationType.Success,1500);
                 UpdateContext({locDeleteUser:false})
             PressedColor: =RGBA(255,255,255,1)
             PressedFill: =Self.Fill
@@ -870,6 +886,12 @@
             OnSelect: |-
                 =//Kiểm tra các trường mã nhân viên, họ tên, email, chức danh
                 If(
+                    CountRows(Filter(gblColAllUser,userID = txt_us_Name_3.Text)) = 1,
+                    Notify(
+                        "Trường mã nhân viên bị trùng",
+                        NotificationType.Error,
+                        1500
+                    ),
                     IsBlank(txt_us_Name_3.Text),
                     Notify(
                         "Trường mã nhân viên không được để trống",
@@ -895,7 +917,7 @@
                         1500
                     ),
                     //Tạo nhân viên
-                    Patch('ASTakeLeave.Users',Defaults('ASTakeLeave.Users'),{userID:txt_us_Name_3.Text,fullName:txt_us_Name_1.Text,email:cbo_us_Email.Selected.Mail,phone:txt_us_Phone_1,jobTitle:txt_us_JobTitle_1,divisionID:drp_us_Department_3.Selected.ID,departmentID:drp_us_Department_1.Selected.ID,'365AccountInfo':{
+                    Patch('ASTakeLeave.Users',Defaults('ASTakeLeave.Users'),{userID:txt_us_Name_3.Text,fullName:txt_us_Name_1.Text,email:cbo_us_Email.Selected.Mail,phone:txt_us_Phone_1.Text,jobTitle:txt_us_JobTitle_1.Text,divisionID:drp_us_Department_3.Selected.ID,departmentID:drp_us_Department_1.Selected.ID,'365AccountInfo':{
                             '@odata.type': "#Microsoft.Azure.Connectors.SharePoint.SPListExpandedUser",
                             Department: "",
                             Claims: "i:0#.f|membership|" & cbo_us_Email.Selected.Mail,
@@ -903,7 +925,7 @@
                             Email: cbo_us_Email.Selected.Mail,
                             JobTitle: "",
                             Picture: ""
-                        }});
+                        },active:1});
                     //Tạo phân quyền
                     Patch('ASTakeLeave.Users_Roles',Defaults('ASTakeLeave.Users_Roles'),{userID:txt_us_Name_3.Text,roleID:drp_us_Roles_1.Selected.ID,active:1});
                     //Tạo quản lý người dùng
@@ -914,6 +936,19 @@
                     1500
                 );
                 Reset(txt_us_Name_3);Reset(txt_us_Name_1);Reset(cbo_us_Email);Reset(txt_us_Phone_1);Reset(txt_us_JobTitle_1);Reset(drp_us_Department_3);Reset(drp_us_Department_1);
+                //Làm mới bảng người dùng
+                Refresh('ASTakeLeave.Users');
+                //Thêm trường role vào bảng user
+                ClearCollect(
+                    gblColAllUser,
+                    AddColumns(
+                        ShowColumns('ASTakeLeave.Users', "ID", "userID", "fullName", "shortName", "email", "phone", "jobTitle", "departmentID", "divisionID", "OData__x0033_65AccountInfo", "active") As temp, 
+                        "roleID", 
+                        LookUp('ASTakeLeave.Users_Roles', userID = temp.userID).roleID
+                    )
+                );
+                //Lấy bảng quản lý người dùng
+                ClearCollect(gblColManagerByUser,Filter('ASTakeLeave.UserRelationship',active = 1));
                 UpdateContext({locCreateUser: false})
             PressedColor: =RGBA(255,255,255,1)
             PressedFill: =Self.Fill
@@ -1012,7 +1047,7 @@
         drp_us_Department_1 As dropdown:
             BorderColor: =RGBA(116, 116, 116, 1)
             BorderThickness: =1
-            Items: =Filter('ASTakeLeave.Department',divisionID = drp_us_Department_3.Selected.ID And active = 1)
+            Items: =Filter(gblColDepartment,divisionID = drp_us_Department_3.Selected.ID And active = 1)
             Width: =260
             X: =548
             Y: =471
@@ -1022,7 +1057,6 @@
             BorderColor: =RGBA(116, 116, 116, 1)
             BorderThickness: =1
             Default: =""
-            Format: =TextFormat.Number
             HintText: ="Nhập chức danh"
             Width: =260
             X: =548
@@ -1032,7 +1066,7 @@
         drp_us_Roles_1 As dropdown:
             BorderColor: =RGBA(116, 116, 116, 1)
             BorderThickness: =1
-            Items: ='ASTakeLeave.Roles'
+            Items: =Filter(gblColRoles,name <> "Tất cả")
             X: =548
             Y: =535
             ZIndex: =19
@@ -1049,7 +1083,7 @@
         drp_us_Manager As dropdown:
             BorderColor: =RGBA(116, 116, 116, 1)
             BorderThickness: =1
-            Items: =Filter('ASTakeLeave.Users',userID exactin (Filter('ASTakeLeave.Users_Roles',roleID = 2)).userID)
+            Items: =Filter(gblColAllUser,active = 1 And roleID = 2)
             X: =548
             Y: =602
             ZIndex: =21
@@ -1084,7 +1118,7 @@
         drp_us_Department_3 As dropdown:
             BorderColor: =RGBA(116, 116, 116, 1)
             BorderThickness: =1
-            Items: =Filter('ASTakeLeave.Division',active = 1)
+            Items: =Filter(gblColDivision,active = 1)
             Width: =260
             X: =548
             Y: =407
@@ -1182,6 +1216,12 @@
             OnSelect: |-
                 =//Kiểm tra các trường mã nhân viên, họ tên, email, chức danh
                 If(
+                    CountRows(Filter(gblColAllUser,userID = txt_us_Name_6.Text)) = 1,
+                    Notify(
+                        "Trường mã nhân viên bị trùng",
+                        NotificationType.Error,
+                        1500
+                    ),
                     IsBlank(txt_us_Name_6.Text),
                     Notify(
                         "Trường mã nhân viên không được để trống",
@@ -1209,7 +1249,7 @@
                     //Sửa nhân viên cũ thành không hoạt động
                     Patch('ASTakeLeave.Users',LookUp('ASTakeLeave.Users',ID = locUser.ID),{active:0});
                     //Tạo nhân viên mới
-                    Patch('ASTakeLeave.Users',Defaults('ASTakeLeave.Users'),{userID:txt_us_Name_6.Text,fullName:txt_us_Name_2.Text,email:cbo_us_Email_2.Selected.Mail,phone:txt_us_Phone_2,jobTitle:txt_us_JobTitle_2,divisionID:drp_us_Department_4.Selected.ID,departmentID:drp_us_Department_2.Selected.ID,'365AccountInfo':{
+                    Patch('ASTakeLeave.Users',Defaults('ASTakeLeave.Users'),{userID:txt_us_Name_6.Text,fullName:txt_us_Name_2.Text,email:cbo_us_Email_2.Selected.Mail,phone:txt_us_Phone_2.Text,jobTitle:txt_us_JobTitle_2.Text,divisionID:drp_us_Department_4.Selected.ID,departmentID:drp_us_Department_2.Selected.ID,'365AccountInfo':{
                             '@odata.type': "#Microsoft.Azure.Connectors.SharePoint.SPListExpandedUser",
                             Department: "",
                             Claims: "i:0#.f|membership|" & cbo_us_Email_2.Selected.Mail,
@@ -1232,6 +1272,19 @@
                     1500
                 );
                 Reset(txt_us_Name_3);Reset(txt_us_Name_1);Reset(cbo_us_Email_2);Reset(txt_us_Phone_1);Reset(txt_us_JobTitle_1);Reset(drp_us_Department_3);Reset(drp_us_Department_1);
+                //Làm mới bảng người dùng
+                Refresh('ASTakeLeave.Users');
+                //Thêm trường role vào bảng user
+                ClearCollect(
+                    gblColAllUser,
+                    AddColumns(
+                        ShowColumns('ASTakeLeave.Users', "ID", "userID", "fullName", "shortName", "email", "phone", "jobTitle", "departmentID", "divisionID", "OData__x0033_65AccountInfo", "active") As temp, 
+                        "roleID", 
+                        LookUp('ASTakeLeave.Users_Roles', userID = temp.userID).roleID
+                    )
+                );
+                //Lấy bảng quản lý người dùng
+                ClearCollect(gblColManagerByUser,Filter('ASTakeLeave.UserRelationship',active = 1));
                 UpdateContext({locUpdateUser:false})
             PressedColor: =RGBA(255,255,255,1)
             PressedFill: =Self.Fill
@@ -1330,7 +1383,7 @@
         drp_us_Department_2 As dropdown:
             BorderColor: =RGBA(116, 116, 116, 1)
             BorderThickness: =1
-            Items: =LookUp('ASTakeLeave.Department',ID = locUser.departmentID)
+            Items: =LookUp(gblColDepartment,active = 1 And ID = locUser.departmentID)
             Width: =260
             X: =548
             Y: =471
@@ -1349,7 +1402,7 @@
         drp_us_Roles_2 As dropdown:
             BorderColor: =RGBA(116, 116, 116, 1)
             BorderThickness: =1
-            Items: =LookUp('ASTakeLeave.Roles',ID = LookUp('ASTakeLeave.Users_Roles',userID = locUser.userID).roleID)
+            Items: =Filter(gblColRoles,name <> "Tất cả")
             X: =548
             Y: =535
             ZIndex: =19
@@ -1366,7 +1419,8 @@
         drp_us_Manager_2 As dropdown:
             BorderColor: =RGBA(116, 116, 116, 1)
             BorderThickness: =1
-            Items: =LookUp('ASTakeLeave.Users',userID = LookUp('ASTakeLeave.UserRelationship',userID = locUser.userID).approveUserID)
+            Default: =LookUp(gblColAllUser,active = 1 And userID = LookUp(gblColManagerByUser,userID = locUser.userID).approveUserID).fullName
+            Items: =Filter(gblColAllUser,active = 1 And roleID = 2)
             X: =548
             Y: =602
             ZIndex: =21
@@ -1401,7 +1455,7 @@
         drp_us_Department_4 As dropdown:
             BorderColor: =RGBA(116, 116, 116, 1)
             BorderThickness: =1
-            Items: =LookUp('ASTakeLeave.Division',ID = locUser.divisionID)
+            Items: =LookUp(gblColDivision,active = 1 And ID = locUser.divisionID)
             Width: =260
             X: =548
             Y: =407
@@ -1410,13 +1464,17 @@
         cbo_us_Email_2 As combobox:
             BorderColor: =RGBA(116, 116, 116, 1)
             BorderThickness: =1
+            DefaultSelectedItems: =LookUp(gblColAllUser,userID = locUser.userID)
             DisplayFields: =["DisplayName","Mail"]
             InputTextPlaceholder: ="Tìm người dùng"
+            IsSearchable: =false
             Items: |-
                 =Office365Users.SearchUserV2({searchTerm:Self.SearchText}).value
+            OnSelect: |-
+                =UpdateContext({locEdit:true});
+                UpdateContext({locAdd:false})
             SearchFields: =["Mail"]
-            SearchItems: |-
-                =Search(Office365Users.SearchUserV2({searchTerm:Self.SearchText}).value,cbo_us_Email_2.SearchText,"Mail")
+            SearchItems: =[]
             SelectMultiple: =false
             Template: =ListItemTemplate.Double
             X: =551

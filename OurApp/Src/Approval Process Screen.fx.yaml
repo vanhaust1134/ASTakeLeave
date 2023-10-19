@@ -1,5 +1,6 @@
 "'Approval Process Screen' As screen":
     Fill: =RGBA(224,224,224,1)
+    OnVisible: =Collect(colCheckRequestCompleted,Filter('ASTakeLeave.LeaveRequest',status = 2))
 
     btn_us_BackGroundScreen_2 As button:
         BorderStyle: =BorderStyle.None
@@ -308,7 +309,7 @@
 
                         lbl_us_ItemDivision_3 As label:
                             Color: =RGBA(114, 114, 114, 1)
-                            FillPortions: =1
+                            FillPortions: =0.85
                             FontWeight: =FontWeight.Semibold
                             LayoutMinHeight: =30
                             OnSelect: |-
@@ -324,7 +325,7 @@
                             LayoutMinHeight: =30
                             OnSelect: |-
                                 =UpdateContext({locUpdateUser:true})
-                            Text: =ThisItem.Name
+                            Text: =LookUp(gblColAllUser,active = 1 And userID = ThisItem.userID).fullName
                             Wrap: =false
                             ZIndex: =3
 
@@ -335,8 +336,9 @@
                             LayoutMinHeight: =0
                             LayoutMinWidth: =0
                             OnSelect: |-
-                                =UpdateContext({locUpdateUser:true});
-                                UpdateContext({locCommon:ThisItem})
+                                =//Kiểm tra các yêu cầu chưa hoàn thành còn lại trước khi thực hiện chỉnh sửa
+                                If(CountRows(colCheckRequestCompleted)=0,UpdateContext({locUpdateUser:true});
+                                UpdateContext({locCommon:ThisItem}),Notify("Có nhiều hơn 1 yêu cầu đang chờ phê duyệt",NotificationType.Information,1500))
                             Width: =50
                             ZIndex: =4
 
@@ -592,7 +594,7 @@
                 =//Cập nhật cấp phê duyệt thành không hoạt động
                 Patch('ASTakeLeave.CommonRelationship',LookUp('ASTakeLeave.CommonRelationship',ID = locCommon.ID),{active:0});
                 //Tạo mới cấp phê duyệt
-                Patch('ASTakeLeave.CommonRelationship',Defaults('ASTakeLeave.CommonRelationship'),{userID:drp_us_Roles_4.Selected.ID});
+                Patch('ASTakeLeave.CommonRelationship',Defaults('ASTakeLeave.CommonRelationship'),{approveProcessLevel:locCommon.approveProcessLevel,userID:drp_us_Roles_4.Selected.userID,active:1});
                 Notify("Sửa thành công",NotificationType.Success,1500);
                 UpdateContext({locUpdateUser:false})
             PressedColor: =RGBA(255,255,255,1)
@@ -638,7 +640,7 @@
         txt_us_Name_4 As text:
             BorderColor: =RGBA(116, 116, 116, 1)
             BorderThickness: =1
-            Default: ="Giám đốc"
+            Default: =If(locCommon.approveProcessLevel = 3,"Giám đốc điều hành","HR / C&B")
             DisplayMode: =DisplayMode.View
             HintText: ="Nhập họ tên"
             Width: =394
@@ -649,7 +651,7 @@
         drp_us_Roles_4 As dropdown:
             BorderColor: =RGBA(116, 116, 116, 1)
             BorderThickness: =1
-            Items: =Filter('ASTakeLeave.Users',userID exactin (Filter('ASTakeLeave.Users_Roles',Or(roleID = 4,roleID = 5,roleID = 6)).userID))
+            Items: =Filter(gblColAllUser,userID exactin (Filter('ASTakeLeave.Users_Roles',Or(roleID = 4,roleID = 5)).userID))
             X: =548
             Y: =236
             ZIndex: =19
