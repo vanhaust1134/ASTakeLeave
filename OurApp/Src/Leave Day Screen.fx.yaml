@@ -409,7 +409,7 @@
                             FillPortions: =1
                             FontWeight: =FontWeight.Semibold
                             LayoutMinHeight: =30
-                            Text: ="12 ngày"
+                            Text: =ThisItem.maxDayOff_Year & " ngày"
                             ZIndex: =3
 
                         lbl_lds_ItemTimeTotal As label:
@@ -417,7 +417,7 @@
                             FillPortions: =1
                             FontWeight: =FontWeight.Semibold
                             LayoutMinHeight: =30
-                            Text: =If(IsBlank(ThisItem.totalDayLeft_Year),"0 ngày",ThisItem.totalDayLeft_Year)
+                            Text: =If(IsBlank(ThisItem.totalDayLeft_Year),"0 ngày",ThisItem.totalDayLeft_Year & " ngày")
                             ZIndex: =4
 
                         lbl_lds_ItemLeaveDay_1 As label:
@@ -425,7 +425,7 @@
                             FillPortions: =1
                             FontWeight: =FontWeight.Semibold
                             LayoutMinHeight: =30
-                            Text: =If(IsBlank(ThisItem.maxDayOff_Year - ThisItem.totalDayLeft_Year),"0 ngày",ThisItem.maxDayOff_Year - ThisItem.totalDayLeft_Year)
+                            Text: =If(IsBlank(ThisItem.maxDayOff_Year - ThisItem.totalDayLeft_Year),"0 ngày",ThisItem.maxDayOff_Year - ThisItem.totalDayLeft_Year & " ngày")
                             ZIndex: =5
 
                         lbl_lds_ItemLeaveDay_2 As label:
@@ -433,7 +433,7 @@
                             FillPortions: =1
                             FontWeight: =FontWeight.Semibold
                             LayoutMinHeight: =30
-                            Text: =If(IsBlank(ThisItem.totalDayUnpaid_Year),"0 ngày",ThisItem.totalDayUnpaid_Year)
+                            Text: =If(IsBlank(ThisItem.totalDayUnpaid_Year),"0 ngày",ThisItem.totalDayUnpaid_Year & " ngày")
                             ZIndex: =6
 
     ctn_lds_Header As groupContainer.horizontalAutoLayoutContainer:
